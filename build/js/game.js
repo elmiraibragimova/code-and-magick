@@ -375,21 +375,95 @@
     },
 
     /**
+     * Отрисовка сообщений.
+     * @param {string} text
+     * @param {number} width
+     */
+    _showMessage: function(text, width) {
+      var ctx = this.ctx;
+      var i;
+
+      // Массив для будущих строк сообщения.
+      var container = [];
+
+      // Параметры текста: если не прописать это здесь,
+      // метод measureText() будет возвращать длину текста
+      // с высотой по умолчанию.
+      ctx.font = '16px PT Mono';
+
+      // Разбиваем переданную строку на слова.
+      var words = text.split(' ');
+
+      // Собираем слова в строчки сообщения
+      // и сравниваем их длину с шириной поля для сообщения.
+      // Затем отправляем полученные строки в массив `container`.
+      var line = '';
+
+      for (i = 0; i < words.length; i++) {
+        var testLine = line + words[i] + ' ';
+        var testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > width) {
+          container.push(line);
+          line = words[i] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+
+      // Оставшиеся слова так же отправляем в массив `container` как отдельную строчку.
+      container.push(line);
+
+      // Высчитываем высоту поля с сообщением.
+      var lineHeight = 20;
+      var height = lineHeight * container.length + 20;
+
+      // Параметры поля с сообщением.
+      var marginY = 100;
+      var marginX = 260;
+
+      // Смещение тени.
+      var shift = 10;
+
+      // Отрисовка тени.
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(marginX + shift, marginY + shift, width, height);
+
+      // Отрисовка поля для сообщения.
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(marginX, marginY, width, height);
+
+      // Отрисовка текста.
+      ctx.fillStyle = '#000';
+      var textMarginY = marginY + 25;
+      var textMarginX = marginX + 10;
+
+      for (i = 0; i < container.length; i++) {
+        ctx.fillText(container[i], textMarginX, textMarginY);
+        textMarginY += lineHeight;
+      }
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          var message = 'Поздравляю! Да ты ninja JavaScript ;)';
+          this._showMessage(message, 200);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          var message = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
+          this._showMessage(message, 200);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          var message = 'Пауза. Для возвращения в игру нажми пробел';
+          this._showMessage(message, 200);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          var message = 'Добро пожаловать в игру! Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
+          this._showMessage(message, 300);
           break;
       }
     },
