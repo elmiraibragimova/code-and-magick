@@ -450,20 +450,20 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          var message = 'Поздравляю! Да ты ninja JavaScript ;)';
-          this._showMessage(message, 200);
+          var winMessage = 'Поздравляю! Да ты ninja JavaScript ;)';
+          this._showMessage(winMessage, 200);
           break;
         case Verdict.FAIL:
-          var message = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
-          this._showMessage(message, 200);
+          var failMessage = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
+          this._showMessage(failMessage, 200);
           break;
         case Verdict.PAUSE:
-          var message = 'Пауза. Для возвращения в игру нажми пробел';
-          this._showMessage(message, 200);
+          var pauseMessage = 'Пауза. Для возвращения в игру нажми пробел';
+          this._showMessage(pauseMessage, 200);
           break;
         case Verdict.INTRO:
-          var message = 'Добро пожаловать в игру! Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
-          this._showMessage(message, 300);
+          var introMessage = 'Добро пожаловать в игру! Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
+          this._showMessage(introMessage, 300);
           break;
       }
     },
