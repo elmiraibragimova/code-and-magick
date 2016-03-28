@@ -418,9 +418,14 @@
       var lineHeight = 20;
       var height = lineHeight * container.length + 20;
 
-      // Параметры поля с сообщением.
-      var marginY = 100;
-      var marginX = 260;
+      // Задаем параметры поля с сообщением так, чтобы оно рисовалось рядом с персонажем
+      // и не выходило за рамки `canvas`
+      var me = this.state.objects.filter(function(object) {
+        return object.type === ObjectType.ME;
+      })[0];
+
+      var marginY = me.y - height > 0 ? me.y - height : me.y + height;
+      var marginX = me.x + width > WIDTH ? me.x - me.width * 2.5 : me.x + 10;
 
       // Смещение тени.
       var shift = 10;
