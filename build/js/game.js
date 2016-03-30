@@ -375,23 +375,182 @@
     },
 
     /**
+     * Отрисовка сообщений.
+     * @param {string} text
+     * @param {number} width
+     * @private
+     */
+    _showMessage: function(text, width) {
+      // Получаем массив, элементы которого являются строками сообщения.
+      var messageText = this._splitText(text, width);
+
+      // Высчитываем высоту сообщения.
+      var height = this._getMessageHeight(messageText);
+
+      // Получаем координаты точки, из которой будет отрисовано сообщение.
+      var position = this._bindToCharacter(height, width);
+
+      // Рисуем тень сообщения.
+      this._drawShadow(position, 10, width, height);
+
+      // Рисуем поле с сообщением.
+      this._drawMessageBox(position, width, height);
+
+      // Отрисовываем текст.
+      this._writeText(position, messageText);
+    },
+
+    /**
+     * Разбиение текста на строчки, не превышающие длину поля с сообщением.
+     * @param {string} text
+     * @param {number} width
+     * @return {Array}
+     * @private
+     */
+    _splitText: function(text, width) {
+      var ctx = this.ctx;
+      var i;
+
+      // Массив для строк сообщения.
+      var container = [];
+
+      // Параметры текста: если не прописать это здесь,
+      // метод measureText() будет возвращать длину текста
+      // с высотой по умолчанию.
+      ctx.font = '16px PT Mono';
+
+      // Разбиваем переданную строку на слова.
+      var words = text.split(' ');
+
+      // Собираем слова в строчки сообщения
+      // и сравниваем их длину с шириной поля для сообщения.
+      // Затем отправляем полученные строки в массив `container`.
+      var line = '';
+
+      for (i = 0; i < words.length; i++) {
+        var testLine = line + words[i] + ' ';
+        var testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > width) {
+          container.push(line);
+          line = words[i] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+
+      // Оставшиеся слова так же отправляем в массив `container` как отдельную строчку.
+      container.push(line);
+
+      return container;
+    },
+
+    /**
+     * Получение высоты сообщения.
+     * @param {Array} messageText
+     * @param {number} [lineHeigth=20]
+     * @return {number}
+     * @private
+     */
+    _getMessageHeight: function(messageText, lineHeight) {
+      lineHeight = lineHeight || 20;
+      return lineHeight * messageText.length + 20;
+    },
+
+    /**
+     * Привязка сообщения к персонажу.
+     * @param {number} height
+     * @param {number} width
+     * @return {Object}
+     * @private
+     */
+    _bindToCharacter: function(height, width) {
+      // Получаем персонаж
+      var me = this.state.objects.filter(function(object) {
+        return object.type === ObjectType.ME;
+      })[0];
+
+      // Возвращаем координаты точки, из которой будет отрисовываться сообщение.
+      return {
+        y: me.y - height > 0 ? me.y - height : me.y + height,
+        x: me.x + width > WIDTH ? me.x - me.width * 2.5 : me.x + 10
+      };
+    },
+
+    /**
+     * Отрисовка тени поля с сообщением.
+     * @param {Object} position
+     * @param {number} position.x
+     * @param {number} position.y
+     * @param {number} shift
+     * @param {number} width
+     * @param {number} height
+     * @private
+     */
+    _drawShadow: function(position, shift, width, height) {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      this.ctx.fillRect(position.x + shift, position.y + shift, width, height);
+    },
+
+    /**
+     * Отрисовка поля с сообщением.
+     * @param {Object} position
+     * @param {number} position.x
+     * @param {number} position.y
+     * @param {number} width
+     * @param {number} height
+     * @private
+     */
+    _drawMessageBox: function(position, width, height) {
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.fillRect(position.x, position.y, width, height);
+    },
+
+    /**
+     * Отрисовка текста сообщения.
+     * @param {Object} position
+     * @param {number} position.x
+     * @param {number} position.y
+     * @param {number} [lineHeigth=20]
+     * @param {Array} messageText
+     * @private
+     */
+    _writeText: function(position, messageText, lineHeight) {
+      this.ctx.fillStyle = '#000';
+      var marginY = position.y + 25;
+      var marginX = position.x + 10;
+      lineHeight = lineHeight || 20;
+      var i;
+
+      for (i = 0; i < messageText.length; i++) {
+        this.ctx.fillText(messageText[i], marginX, marginY);
+        marginY += lineHeight;
+      }
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      var message;
+      var length = 200;
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          message = 'Поздравляю! Да ты ninja JavaScript ;)';
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          message = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          message = 'Пауза. Для возвращения в игру нажми пробел';
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          length = 300;
+          message = 'Добро пожаловать в игру! '
+                  + 'Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
           break;
       }
+      this._showMessage(message, length);
     },
 
     /**
