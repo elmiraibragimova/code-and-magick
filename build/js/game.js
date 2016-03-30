@@ -448,14 +448,13 @@
     /**
      * Получение высоты сообщения.
      * @param {Array} messageText
+     * @param {number} [lineHeigth=20]
      * @return {number}
      * @private
      */
-    _getMessageHeight: function(messageText) {
-      var lineHeight = 20;
-      var height = lineHeight * messageText.length + 20;
-
-      return height;
+    _getMessageHeight: function(messageText, lineHeight) {
+      lineHeight = lineHeight || 20;
+      return lineHeight * messageText.length + 20;
     },
 
     /**
@@ -512,14 +511,15 @@
      * @param {Object} position
      * @param {number} position.x
      * @param {number} position.y
+     * @param {number} [lineHeigth=20]
      * @param {Array} messageText
      * @private
      */
-    _writeText: function(position, messageText) {
+    _writeText: function(position, messageText, lineHeight) {
       this.ctx.fillStyle = '#000';
       var marginY = position.y + 25;
       var marginX = position.x + 10;
-      var lineHeight = 20;
+      lineHeight = lineHeight || 20;
       var i;
 
       for (i = 0; i < messageText.length; i++) {
@@ -532,25 +532,25 @@
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      var message;
+      var length = 200;
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          var winMessage = 'Поздравляю! Да ты ninja JavaScript ;)';
-          this._showMessage(winMessage, 200);
+          message = 'Поздравляю! Да ты ninja JavaScript ;)';
           break;
         case Verdict.FAIL:
-          var failMessage = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
-          this._showMessage(failMessage, 200);
+          message = 'Игра проиграна :( Да, кодить на JS иногда очень трудно...';
           break;
         case Verdict.PAUSE:
-          var pauseMessage = 'Пауза. Для возвращения в игру нажми пробел';
-          this._showMessage(pauseMessage, 200);
+          message = 'Пауза. Для возвращения в игру нажми пробел';
           break;
         case Verdict.INTRO:
-          var introMessage = 'Добро пожаловать в игру! '
-                              + 'Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
-          this._showMessage(introMessage, 300);
+          length = 300;
+          message = 'Добро пожаловать в игру! '
+                  + 'Нажми на пробел, чтобы начать увлекательное приключение и стать ninja JS ;)';
           break;
       }
+      this._showMessage(message, length);
     },
 
     /**
