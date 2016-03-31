@@ -12,7 +12,7 @@
     "url": "https://github.com/htmlacademy-javascript/184656-code-and-magick/issues"
   },
   "homepage": "https://github.com/htmlacademy-javascript/184656-code-and-magick",
-  "dependencies": {
+  "devDependencies": {
     "eslint": "^2.4.0",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1"
