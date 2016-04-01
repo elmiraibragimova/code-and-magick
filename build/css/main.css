@@ -499,6 +499,33 @@ input[type=radio]:checked + .review-mark-label {
   cursor: pointer;
 }
 
+.review-tip {
+  position: absolute;
+
+  padding: 5px;
+  margin-top: 2px;
+  width: 200px;
+
+  font-size: 12px;
+
+  background-color: #7c1010;
+}
+
+.review-tip::before {
+  position: absolute;
+  top: -7px;
+  left: 15px;
+
+  width: 15px;
+  height: 15px;
+
+  background-color: inherit;
+
+  content: ' ';
+
+  transform: rotate(45deg);
+}
+
 .overlay-gallery {
   text-align: center;
 }
