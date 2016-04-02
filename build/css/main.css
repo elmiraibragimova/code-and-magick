@@ -511,21 +511,6 @@ input[type=radio]:checked + .review-mark-label {
   background-color: #7c1010;
 }
 
-.review-tip::before {
-  position: absolute;
-  top: -7px;
-  left: 15px;
-
-  width: 15px;
-  height: 15px;
-
-  background-color: inherit;
-
-  content: ' ';
-
-  transform: rotate(45deg);
-}
-
 .overlay-gallery {
   text-align: center;
 }

@@ -33,12 +33,7 @@
 
   var checkFields = function() {
     this.checkValidity();
-  }
-
-  var showTip = function() {
-    toggleVisibility(tipName, formName.validity.valid);
-    toggleVisibility(tipText, formText.validity.valid);
-  }
+  };
 
   /**
    * @param {HTMLElement} elem
@@ -46,22 +41,22 @@
    */
   var toggleVisibility = function(elem, isVisible) {
     elem.classList[isVisible ? 'add' : 'remove']('invisible');
-  }
+  };
 
   /**
-   * Удаление подсказок и меток на необязательные и правильно заполненные поля.
+   * Удаление меток на необязательные и правильно заполненные поля.
    */
   var removeLabels = function() {
     [labelName, labelText, labelBox].forEach(function(label) {
       toggleVisibility(label, false);
     });
 
+    // Если поле заполнено, удаляем метку на него.
     toggleVisibility(labelName, formName.validity.valid);
     toggleVisibility(labelText, formText.validity.valid);
-    toggleVisibility(labelBox, formText.validity.valid && formName.validity.valid);
 
-    // toggleVisibility(tipName, true);
-    // toggleVisibility(tipText, true);
+    // Если заполнены оба обязательных поля, удаляем весь блок с метками
+    toggleVisibility(labelBox, formText.validity.valid && formName.validity.valid);
   };
 
   /**
@@ -85,14 +80,25 @@
 
   formName.oninput = validate;
   formText.oninput = validate;
+
   Array.prototype.slice.apply(marks).forEach(function(mark) {
-    mark.onclick = validate;
+    mark.onclick = function() {
+      validate();
+      toggleVisibility(tipName, true);
+      toggleVisibility(tipText, true);
+    };
   });
 
   formText.onblur = checkFields;
   formName.onblur = checkFields;
-  formName.oninvalid = showTip;
-  formText.oninvalid = showTip;
+
+  formText.oninvalid = function() {
+    toggleVisibility(tipText, false);
+  };
+
+  formName.oninvalid = function() {
+    toggleVisibility(tipName, false);
+  };
 
   formText.onkeyup = function() {
     toggleVisibility(tipText, true);
