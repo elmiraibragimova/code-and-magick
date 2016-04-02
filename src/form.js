@@ -40,7 +40,7 @@
    * @param {boolean} isVisible
    */
   var toggleVisibility = function(elem, isVisible) {
-    elem.classList[isVisible ? 'add' : 'remove']('invisible');
+    elem.classList[(!isVisible) ? 'add' : 'remove']('invisible');
   };
 
   /**
@@ -48,15 +48,18 @@
    */
   var removeLabels = function() {
     [labelName, labelText, labelBox].forEach(function(label) {
-      toggleVisibility(label, false);
+      toggleVisibility(label, true);
     });
 
+    var validName = formName.validity.valid;
+    var validText = formText.validity.valid;
+
     // Если поле заполнено, удаляем метку на него.
-    toggleVisibility(labelName, formName.validity.valid);
-    toggleVisibility(labelText, formText.validity.valid);
+    toggleVisibility(labelName, !validName);
+    toggleVisibility(labelText, !validText);
 
     // Если заполнены оба обязательных поля, удаляем весь блок с метками
-    toggleVisibility(labelBox, formText.validity.valid && formName.validity.valid);
+    toggleVisibility(labelBox,  !(validName && validText));
   };
 
   /**
@@ -84,8 +87,8 @@
   Array.prototype.slice.apply(marks).forEach(function(mark) {
     mark.onclick = function() {
       validate();
-      toggleVisibility(tipName, true);
-      toggleVisibility(tipText, true);
+      toggleVisibility(tipName, false);
+      toggleVisibility(tipText, false);
     };
   });
 
@@ -93,18 +96,18 @@
   formName.onblur = checkFields;
 
   formText.oninvalid = function() {
-    toggleVisibility(tipText, false);
-  };
-
-  formName.oninvalid = function() {
-    toggleVisibility(tipName, false);
-  };
-
-  formText.onkeyup = function() {
     toggleVisibility(tipText, true);
   };
 
-  formName.onkeyup = function() {
+  formName.oninvalid = function() {
     toggleVisibility(tipName, true);
+  };
+
+  formText.onkeyup = function() {
+    toggleVisibility(tipText, false);
+  };
+
+  formName.onkeyup = function() {
+    toggleVisibility(tipName, false);
   };
 })();
