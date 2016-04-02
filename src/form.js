@@ -15,7 +15,6 @@
     formContainer.classList.add('invisible');
   };
 
-
   var reviewForm = document.querySelector('.review-form');
   var marks = reviewForm.elements['review-mark'];
 
@@ -44,13 +43,9 @@
   };
 
   /**
-   * Удаление меток на необязательные и правильно заполненные поля.
+   * Проверка формы.
    */
-  var removeLabels = function() {
-    [labelName, labelText, labelBox].forEach(function(label) {
-      toggleVisibility(label, true);
-    });
-
+  var validateReviewForm = function() {
     var validName = formName.validity.valid;
     var validText = formText.validity.valid;
 
@@ -58,35 +53,27 @@
     toggleVisibility(labelName, !validName);
     toggleVisibility(labelText, !validText);
 
-    // Если заполнены оба обязательных поля, удаляем весь блок с метками
+    // Если заполнены оба обязательных поля, удаляем весь блок с метками.
     toggleVisibility(labelBox,  !(validName && validText));
-  };
 
-  /**
-   * Проверка формы.
-   */
-  var validate = function() {
     // Если оценка ниже '3', поле для отзыва становится обязательным.
     formText.required = marks.value < 3;
 
-    // Удаляем метки на корректно заполненные поля.
-    removeLabels();
-
     // Если оба поля заполнены корректно, кнопка для отправки формы становится активной.
-    formButtonSubmit.disabled = !(formText.validity.valid && formName.validity.valid);
+    formButtonSubmit.disabled = !(validName && validText);
   };
 
   formButtonSubmit.disabled = true;
   formName.required = true;
 
-  removeLabels();
+  validateReviewForm();
 
-  formName.oninput = validate;
-  formText.oninput = validate;
+  formName.oninput = validateReviewForm;
+  formText.oninput = validateReviewForm;
 
   Array.prototype.slice.apply(marks).forEach(function(mark) {
     mark.onclick = function() {
-      validate();
+      validateReviewForm();
       toggleVisibility(tipName, false);
       toggleVisibility(tipText, false);
     };
