@@ -103,11 +103,11 @@
     toggleVisibility(tipName, true);
   };
 
-  formText.onkeyup = function() {
+  formText.onfocus = function() {
     toggleVisibility(tipText, false);
   };
 
-  formName.onkeyup = function() {
+  formName.onfocus = function() {
     toggleVisibility(tipName, false);
   };
 })();
