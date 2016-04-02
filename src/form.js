@@ -15,70 +15,73 @@
     formContainer.classList.add('invisible');
   };
 
+
   var reviewForm = document.querySelector('.review-form');
   var marks = reviewForm.elements['review-mark'];
+
   var formButtonSubmit = document.querySelector('button[type=submit]');
   var formName = document.querySelector('#review-name');
   var formText = document.querySelector('#review-text');
-  var marksValue;
 
-  // Ссылки на поля.
-  var fieldsName = document.querySelector('.review-fields-name');
-  var fieldsText = document.querySelector('.review-fields-text');
-  var formControl = document.querySelector('.review-fields');
+  var labelName = document.querySelector('.review-fields-name');
+  var labelText = document.querySelector('.review-fields-text');
+  var labelBox = document.querySelector('.review-fields');
 
-  // Прячем ссылку на необязательное поле.
-  fieldsText.classList.add('invisible');
+  var tipName = document.getElementById('review-tip-name');
+  var tipText = document.getElementById('review-tip-text');
 
-  formButtonSubmit.disabled = true;
-  formName.required = true;
+
+  var checkFields = function() {
+    this.checkValidity();
+  }
+
+  var showTip = function() {
+    toggleVisibility(tipName, formName.validity.valid);
+    toggleVisibility(tipText, formText.validity.valid);
+  }
 
   /**
-   * Удаление ссылок на обязательные поля.
+   * @param {HTMLElement} elem
+   * @param {boolean} isVisible
+   */
+  var toggleVisibility = function(elem, isVisible) {
+    elem.classList[isVisible ? 'add' : 'remove']('invisible');
+  }
+
+  /**
+   * Удаление подсказок и меток на необязательные и правильно заполненные поля.
    */
   var removeLabels = function() {
-    // Делаем видимыми все ссылки.
-    // Ссылки на корректно заполненные поля скроем после проверки полей.
-    fieldsText.classList.remove('invisible');
-    fieldsName.classList.remove('invisible');
-    formControl.classList.remove('invisible');
+    [labelName, labelText, labelBox].forEach(function(label) {
+      toggleVisibility(label, false);
+    });
 
-    // Проверяем поля и удаляем ссылки на заполненные правильно.
-    if (formName.validity.valid) {
-      fieldsName.classList.add('invisible');
-    }
+    toggleVisibility(labelName, formName.validity.valid);
+    toggleVisibility(labelText, formText.validity.valid);
+    toggleVisibility(labelBox, formText.validity.valid && formName.validity.valid);
 
-    if (formText.validity.valid) {
-      fieldsText.classList.add('invisible');
-    }
-
-    if (!formButtonSubmit.disabled) {
-      formControl.classList.add('invisible');
-    }
+    // toggleVisibility(tipName, true);
+    // toggleVisibility(tipText, true);
   };
 
   /**
    * Проверка формы.
    */
   var validate = function() {
-    // Получаем оценку - значение радиокнопки.
-    marksValue = marks.value;
-
     // Если оценка ниже '3', поле для отзыва становится обязательным.
-    // Второе условие необходимо для того, чтобы поле реагировало на каждое последующее
-    // изменение оценки, а не только на первое.
-    if (marksValue < 3) {
-      formText.required = true;
-    } else {
-      formText.required = false;
-    }
+    formText.required = marks.value < 3;
 
-    // Если оба поля заполнены корректно,
-    // кнопка для отправки формы становится активной.
-    formButtonSubmit.disabled = !(formText.validity.valid && formName.validity.valid);
-
+    // Удаляем метки на корректно заполненные поля.
     removeLabels();
+
+    // Если оба поля заполнены корректно, кнопка для отправки формы становится активной.
+    formButtonSubmit.disabled = !(formText.validity.valid && formName.validity.valid);
   };
+
+  formButtonSubmit.disabled = true;
+  formName.required = true;
+
+  removeLabels();
 
   formName.oninput = validate;
   formText.oninput = validate;
@@ -86,25 +89,16 @@
     mark.onclick = validate;
   });
 
+  formText.onblur = checkFields;
+  formName.onblur = checkFields;
+  formName.oninvalid = showTip;
+  formText.oninvalid = showTip;
 
-  // Проверяем, заполнено ли обязательное поле.
-  formText.onblur = function() {
-    formText.checkValidity();
+  formText.onkeyup = function() {
+    toggleVisibility(tipText, true);
   };
 
-  formName.onblur = function() {
-    formName.checkValidity();
+  formName.onkeyup = function() {
+    toggleVisibility(tipName, true);
   };
-
-  // Если поля заполнены неправильно, появляется сообщение с подсказкой.
-  formName.oninvalid = function(event) {
-    var target = event.target.nextSibling.nextSibling;
-    target.classList.remove('invisible');
-  };
-
-  formText.oninvalid = function() {
-    var target = event.target.nextSibling.nextSibling;
-    target.classList.remove('invisible');
-  };
-
 })();
