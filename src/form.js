@@ -53,13 +53,13 @@
    * Сохранение информации, введенной пользователем.
    */
   var setReviewFormCookies = function() {
-    var storageLile = getStorageLife();
+    var storageLife = getStorageLife();
 
     browserCookies.set('rating', marks.value, {
-      expires: storageLile
+      expires: storageLife
     });
     browserCookies.set('name', formName.value, {
-      expires: storageLile
+      expires: storageLife
     });
   };
 
