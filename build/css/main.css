@@ -499,6 +499,18 @@ input[type=radio]:checked + .review-mark-label {
   cursor: pointer;
 }
 
+.review-tip {
+  position: absolute;
+
+  padding: 5px;
+  margin-top: 2px;
+  width: 200px;
+
+  font-size: 12px;
+
+  background-color: #7c1010;
+}
+
 .overlay-gallery {
   text-align: center;
 }

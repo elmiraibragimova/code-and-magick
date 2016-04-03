@@ -75,12 +75,14 @@
 
     <fieldset class="review-form-group">
       <label for="review-name" class="review-form-label">Имя</label><br>
-      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name">
+      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name" required>
+      <div id="review-tip-name" class="review-tip invisible">Заполните, пожалуйста, поле.</div>
     </fieldset>
 
     <fieldset class="review-form-group">
       <label for="review-text" class="review-form-label">Отзыв</label><br>
       <textarea name="review-text" id="review-text" class="review-form-field review-form-field-text" cols="32" rows="8"></textarea>
+      <div id="review-tip-text" class="review-tip invisible">Если оценка ниже 3, поле обязательно для заполнения.</div>
     </fieldset>
 
     <div class="review-form-controls">
