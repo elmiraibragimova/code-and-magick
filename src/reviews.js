@@ -41,19 +41,16 @@
    */
   var insertMark = function(review, rating) {
     var mark = review.querySelector('.review-rating');
-    switch (rating) {
-      case 2:
-        mark.classList.add('review-rating-two');
-        break;
-      case 3:
-        mark.classList.add('review-rating-three');
-        break;
-      case 4:
-        mark.classList.add('review-rating-four');
-        break;
-      case 5:
-        mark.classList.add('review-rating-five');
-        break;
+
+    var marks = {
+        2: 'two',
+        3: 'three',
+        4: 'four',
+        5: 'five',
+      };
+
+    if (rating > 1) {
+      mark.classList.add('review-rating-' + marks[rating]);
     }
   };
 
