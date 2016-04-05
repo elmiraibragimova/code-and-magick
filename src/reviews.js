@@ -49,7 +49,7 @@
       5: 'five'
     };
 
-    if (rating > 1) {
+    if (rating > 1 && rating <= 5) {
       mark.classList.add('review-rating-' + marks[rating]);
     }
   };
