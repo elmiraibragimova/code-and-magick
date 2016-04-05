@@ -19,6 +19,11 @@
    * @param {Obkect} path
    */
   var insertImage = function(review, path) {
+    /**
+     * @const {number}
+     */
+    var IMAGE_LOAD_TIMEOUT = 10000;
+
     var author = review.querySelector('.review-author');
     author.title = path.name;
     author.alt = 'Фотография пользователя ' + path.name;
@@ -26,6 +31,7 @@
     var authorImage = new Image();
 
     authorImage.onload = function(evt) {
+      clearTimeout(loadTimeout);
       author.src = evt.target.src;
       author.width = 124;
       author.height = 124;
@@ -36,6 +42,11 @@
     };
 
     authorImage.src = path.picture;
+
+    var loadTimeout = setTimeout(function() {
+      author.src = '';
+      review.classList.add('review-load-failure');
+    }, IMAGE_LOAD_TIMEOUT);
   };
 
   /**
