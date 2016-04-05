@@ -36,6 +36,9 @@
    * return {number} Количество дней, прошедших с последнего дня рождения.
    */
   var getStorageLife = function() {
+    /**
+     * @const {number}
+     */
     var MILLISEC_IN_DAY = 1000 * 24 * 60 * 60;
 
     var currentDate = new Date();
