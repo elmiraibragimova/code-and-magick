@@ -43,11 +43,11 @@
     var mark = review.querySelector('.review-rating');
 
     var marks = {
-        2: 'two',
-        3: 'three',
-        4: 'four',
-        5: 'five',
-      };
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five'
+    };
 
     if (rating > 1) {
       mark.classList.add('review-rating-' + marks[rating]);
