@@ -16,10 +16,13 @@
 
   /**
    * @param {HTMLElement} review
-   * @param {string} path
+   * @param {Obkect} path
    */
   var insertImage = function(review, path) {
     var author = review.querySelector('.review-author');
+    author.title = path.name;
+    author.alt = 'Фотография пользователя ' + path.name;
+
     var authorImage = new Image();
 
     authorImage.onload = function(evt) {
@@ -32,7 +35,7 @@
       review.classList.add('review-load-failure');
     };
 
-    authorImage.src = path;
+    authorImage.src = path.picture;
   };
 
   /**
@@ -70,7 +73,7 @@
     insertMark(reviewItem, data.rating);
 
     // Вставляем изображение.
-    insertImage(reviewItem, data.author.picture);
+    insertImage(reviewItem, data.author);
 
     // Вставляем отзыв в разметку.
     container.appendChild(reviewItem);
