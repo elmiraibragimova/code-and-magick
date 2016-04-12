@@ -2,7 +2,6 @@
 
 (function() {
   var filtersContainer = document.querySelector('.reviews-filter');
-  filtersContainer.classList.add('invisible');
 
   var reviewsSection = document.querySelector('.reviews');
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -118,17 +117,20 @@
   var getReviews = function(callback) {
     var xhr = new XMLHttpRequest();
 
-    xhr.onprogress = function() {
-      reviewsSection.classList.add('reviews-list-loading');
-    };
+    xhr.open('GET', REVIEWS_LOAD_URL);
 
     xhr.onload = function(evt) {
       reviewsSection.classList.remove('reviews-list-loading');
+
+      // mark
+      filtersContainer.classList.remove('invisible');
       var loadedData = JSON.parse(evt.target.response);
       callback(loadedData);
     };
 
     xhr.onerror = function() {
+      // mark
+      reviewsSection.classList.remove('reviews-list-loading');
       reviewsSection.classList.add('reviews-load-failure');
     };
 
@@ -137,7 +139,9 @@
       reviewsSection.classList.add('reviews-load-failure');
     };
 
-    xhr.open('GET', REVIEWS_LOAD_URL);
+    reviewsSection.classList.add('reviews-list-loading');
+    filtersContainer.classList.add('invisible');
+
     xhr.send();
   };
 
@@ -275,6 +279,4 @@
     setFiltrsEnabled(reviews);
     renderReviews(reviews);
   });
-
-  filtersContainer.classList.remove('invisible');
 })();
