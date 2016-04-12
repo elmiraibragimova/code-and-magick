@@ -113,6 +113,11 @@
     container.appendChild(reviewItem);
   };
 
+  var setReviewsAsFailed = function() {
+    reviewsSection.classList.remove('reviews-list-loading');
+    reviewsSection.classList.add('reviews-load-failure');
+  };
+
   /**
    * @param {function(Array.<Object>)} callback
    */
@@ -134,16 +139,10 @@
       callback(loadedData);
     };
 
-    xhr.onerror = function() {
-      reviewsSection.classList.remove('reviews-list-loading');
-      reviewsSection.classList.add('reviews-load-failure');
-    };
+    xhr.onerror = setReviewsAsFailed;
+    xhr.ontimeout = setReviewsAsFailed;
 
     xhr.timeout = LOAD_TIMEOUT;
-    xhr.ontimeout = function() {
-      reviewsSection.classList.remove('reviews-list-loading');
-      reviewsSection.classList.add('reviews-load-failure');
-    };
 
     reviewsSection.classList.add('reviews-list-loading');
     filtersContainer.classList.add('invisible');
