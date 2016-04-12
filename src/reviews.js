@@ -1,9 +1,10 @@
 'use strict';
 
 (function() {
-  var filter = document.querySelector('.reviews-filter');
-  filter.classList.add('invisible');
+  var filtersContainer = document.querySelector('.reviews-filter');
+  filtersContainer.classList.add('invisible');
 
+  var reviewsSection = document.querySelector('.reviews');
   var reviewsContainer = document.querySelector('.reviews-list');
   var template = document.querySelector('template');
   var sample;
@@ -15,15 +16,36 @@
   }
 
   /**
+   * @const {number}
+   */
+  var TWO_WEEKS = 14 * 24 * 60 * 60 * 1000;
+
+  /**
+   * @const {number}
+   */
+  var LOAD_TIMEOUT = 10000;
+
+  /**
+   * @const {string}
+   */
+  var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
+
+  /**
+   * @enum {string}
+   */
+  var Filter = {
+    'ALL': 'reviews-all',
+    'RECENT': 'reviews-recent',
+    'GOOD': 'reviews-good',
+    'BAD': 'reviews-bad',
+    'POPULAR': 'reviews-popular'
+  };
+
+  /**
    * @param {HTMLElement} review
-   * @param {Obkect} path
+   * @param {Object} path
    */
   var insertImage = function(review, path) {
-    /**
-     * @const {number}
-     */
-    var IMAGE_LOAD_TIMEOUT = 10000;
-
     var author = review.querySelector('.review-author');
     author.title = path.name;
     author.alt = 'Фотография пользователя ' + path.name;
@@ -46,7 +68,7 @@
     var loadTimeout = setTimeout(function() {
       author.src = '';
       review.classList.add('review-load-failure');
-    }, IMAGE_LOAD_TIMEOUT);
+    }, LOAD_TIMEOUT);
   };
 
   /**
@@ -90,9 +112,169 @@
     container.appendChild(reviewItem);
   };
 
-  window.reviews.forEach(function(review) {
-    createReviewItem(review, reviewsContainer);
+  /**
+   * @param {function(Array.<Object>)} callback
+   */
+  var getReviews = function(callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onprogress = function() {
+      reviewsSection.classList.add('reviews-list-loading');
+    };
+
+    xhr.onload = function(evt) {
+      reviewsSection.classList.remove('reviews-list-loading');
+      var loadedData = JSON.parse(evt.target.response);
+      callback(loadedData);
+    };
+
+    xhr.onerror = function() {
+      reviewsSection.classList.add('reviews-load-failure');
+    };
+
+    xhr.timeout = LOAD_TIMEOUT;
+    xhr.ontimeout = function() {
+      reviewsSection.classList.add('reviews-load-failure');
+    };
+
+    xhr.open('GET', REVIEWS_LOAD_URL);
+    xhr.send();
+  };
+
+  /**
+   * @param {Array.<Object>} reviews
+   */
+  var renderReviews = function(reviews) {
+    reviewsContainer.innerHTML = '';
+    reviews.forEach(function(review) {
+      createReviewItem(review, reviewsContainer);
+    });
+  };
+
+  /**
+   * Фильтр для отзывов, написанных за последние две недели.
+   * Отзывы отрисовываются по убыванию даты.
+   * (На самом деле они вообще не отрисовываются, так как последние из них
+   * были оставлены больше двух недель назад).
+   * @param {Array.<Object>} reviews
+   */
+  var getRecentReviews = function(reviews) {
+    var currentDate = new Date();
+    var dayBeforeTwoWeeks = Math.floor(currentDate.valueOf() - TWO_WEEKS);
+
+    reviews = reviews.filter(function(review) {
+      var reviewDate = new Date(review.date).valueOf();
+
+      return reviewDate <= dayBeforeTwoWeeks;
+    });
+
+    reviews.sort(function(a, b) {
+      var firstDate = new Date(a.date);
+      var secondDate = new Date(b.date);
+
+      return secondDate - firstDate;
+    });
+
+    return reviews;
+  };
+
+  /**
+   * Фильтр для хороших отзывов (выводятся по убыванию рейтинга).
+   * @param {Array.<Object>} reviews
+   */
+  var getGoodReviews = function(reviews) {
+    reviews = reviews.filter(function(review) {
+      return review.rating >= 3;
+    });
+
+    reviews.sort(function(a, b) {
+      return b.rating - a.rating;
+    });
+
+    return reviews;
+  };
+
+  /**
+   * Фильтр для плохих отзывов (выводятся по возрастанию рейтинга).
+   * @param {Array.<Object>} reviews
+   */
+  var getBadReviews = function(reviews) {
+    reviews = reviews.filter(function(review) {
+      return review.rating <= 2;
+    });
+
+    reviews.sort(function(a, b) {
+      return a.rating - b.rating;
+    });
+
+    return reviews;
+  };
+
+  /**
+   * Фильтр для популярных отзывов (выводятся по убыванию оценки отзыва).
+   * @param {Array.<Object>} reviews
+   */
+  var getPopularReviews = function(reviews) {
+    reviews.sort(function(a, b) {
+      return b.review_usefulness - a.review_usefulness;
+    });
+    return reviews;
+  };
+
+  /**
+   * Фильтрация отзывов.
+   * @param {Array.<Object>} reviews
+   * @param {string} filter
+   */
+  var getFilteredReviews = function(reviews, filter) {
+    var reviewsToFilter = reviews.slice(0);
+
+    switch (filter) {
+      case Filter.ALL:
+        return reviewsToFilter;
+
+      case Filter.RECENT:
+        return getRecentReviews(reviewsToFilter);
+
+      case Filter.GOOD:
+        return getGoodReviews(reviewsToFilter);
+
+      case Filter.BAD:
+        return getBadReviews(reviewsToFilter);
+
+      case Filter.POPULAR:
+        return getPopularReviews(reviewsToFilter);
+    }
+
+    return reviewsToFilter;
+  };
+
+  /**
+   * @param {Filter} filter
+   * @param {Array.<Object>} reviews
+   */
+  var setFilterEnabled = function(filter, reviews) {
+    var filteredReviews = getFilteredReviews(reviews, filter);
+    renderReviews(filteredReviews);
+  };
+
+  /**
+   * @param {Array.<Object>} reviews
+   */
+  var setFiltrsEnabled = function(reviews) {
+    var filters = filtersContainer.querySelectorAll('.reviews-filter input');
+    for (var i = 0; i < filters.length; i++) {
+      filters[i].onclick = function() {
+        setFilterEnabled(this.id, reviews);
+      };
+    }
+  };
+
+  getReviews(function(loadedReviews) {
+    var reviews = loadedReviews;
+    setFiltrsEnabled(reviews);
+    renderReviews(reviews);
   });
 
-  filter.classList.remove('invisible');
+  filtersContainer.classList.remove('invisible');
 })();
