@@ -46,28 +46,30 @@
    */
   var insertImage = function(review, path) {
     var author = review.querySelector('.review-author');
-    author.title = path.name;
-    author.alt = 'Фотография пользователя ' + path.name;
 
-    var authorImage = new Image();
+    var authorImage = new Image(124, 124);
 
-    authorImage.onload = function(evt) {
+    authorImage.title = author.title = path.name;
+    authorImage.alt = author.alt = 'Фотография пользователя ' + path.name;
+
+    authorImage.onload = function() {
       clearTimeout(loadTimeout);
-      author.src = evt.target.src;
-      author.width = 124;
-      author.height = 124;
+
+      authorImage.classList.add('review-author');
+      review.replaceChild(authorImage, author);
     };
 
     authorImage.onerror = function() {
+      clearTimeout(loadTimeout);
       review.classList.add('review-load-failure');
     };
-
-    authorImage.src = path.picture;
 
     var loadTimeout = setTimeout(function() {
       author.src = '';
       review.classList.add('review-load-failure');
     }, LOAD_TIMEOUT);
+
+    authorImage.src = path.picture;
   };
 
   /**
@@ -121,21 +123,25 @@
 
     xhr.onload = function(evt) {
       reviewsSection.classList.remove('reviews-list-loading');
-
-      // mark
       filtersContainer.classList.remove('invisible');
-      var loadedData = JSON.parse(evt.target.response);
+
+      try {
+        var loadedData = JSON.parse(evt.target.response);
+      } catch (exeption) {
+        reviewsSection.classList.add('reviews-load-failure');
+      }
+
       callback(loadedData);
     };
 
     xhr.onerror = function() {
-      // mark
       reviewsSection.classList.remove('reviews-list-loading');
       reviewsSection.classList.add('reviews-load-failure');
     };
 
     xhr.timeout = LOAD_TIMEOUT;
     xhr.ontimeout = function() {
+      reviewsSection.classList.remove('reviews-list-loading');
       reviewsSection.classList.add('reviews-load-failure');
     };
 
