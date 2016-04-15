@@ -152,9 +152,11 @@
 
   /**
    * @param {Array.<Object>} reviews
+   * @param {number} page
    */
   var renderReviews = function(reviews) {
     reviewsContainer.innerHTML = '';
+
     reviews.forEach(function(review) {
       createReviewItem(review, reviewsContainer);
     });
@@ -163,8 +165,6 @@
   /**
    * Фильтр для отзывов, написанных за последние две недели.
    * Отзывы отрисовываются по убыванию даты.
-   * (На самом деле они вообще не отрисовываются, так как последние из них
-   * были оставлены больше двух недель назад).
    * @param {Array.<Object>} reviews
    */
   var getRecentReviews = function(reviews) {
@@ -174,7 +174,7 @@
     reviews = reviews.filter(function(review) {
       var reviewDate = new Date(review.date).valueOf();
 
-      return reviewDate <= dayBeforeTwoWeeks;
+      return reviewDate >= dayBeforeTwoWeeks;
     });
 
     reviews.sort(function(a, b) {
