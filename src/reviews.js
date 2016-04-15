@@ -297,16 +297,31 @@
   var setFilterEnabled = function(filter) {
     filteredReviews = getFilteredReviews(reviews, filter);
     pageNumber = 0;
+
     renderReviews(filteredReviews, pageNumber, true);
   };
 
   var setFiltersEnabled = function() {
-    var filters = filtersContainer.querySelectorAll('.reviews-filter input');
-    for (var i = 0; i < filters.length; i++) {
-      filters[i].onclick = function() {
-        setFilterEnabled(this.id);
-      };
-    }
+    filtersContainer.addEventListener('click', function(evt) {
+      var label = evt.target.classList.contains('reviews-filter-item');
+      var input = evt.target.nodeName === 'INPUT';
+
+      if (label || input) {
+        setFilterEnabled(evt.target.id);
+      }
+    });
+
+    filtersContainer.addEventListener('keydown', function(evt) {
+      var label = evt.target.classList.contains('reviews-filter-item');
+      var key = ([13, 32].indexOf(evt.keyCode) > -1);
+
+      if (key && label) {
+        evt.preventDefault();
+
+        var filter = evt.target.getAttribute('for');
+        setFilterEnabled(filter);
+      }
+    });
   };
 
   /**
