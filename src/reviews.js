@@ -2,6 +2,7 @@
 
 (function() {
   var filtersContainer = document.querySelector('.reviews-filter');
+  var moreButton = document.querySelector('.reviews-controls-more');
 
   var reviewsSection = document.querySelector('.reviews');
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -25,6 +26,11 @@
   var LOAD_TIMEOUT = 10000;
 
   /**
+   * @const {number}
+   */
+  var PAGE_SIZE = 3;
+
+  /**
    * @const {string}
    */
   var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
@@ -33,6 +39,16 @@
    * @type {Array.<Object>}
    */
   var reviews = [];
+
+  /**
+   * @type {Array.<Object>}
+   */
+  var filteredReviews = [];
+
+  /**
+   * @type {number}
+   */
+  var pageNumber = 0;
 
   /**
    * @enum {string}
@@ -139,6 +155,7 @@
     xhr.onload = function(evt) {
       reviewsSection.classList.remove('reviews-list-loading');
       filtersContainer.classList.remove('invisible');
+      moreButton.classList.remove('invisible');
 
       try {
         var loadedData = JSON.parse(evt.target.response);
@@ -163,11 +180,17 @@
   /**
    * @param {Array.<Object>} reviews
    * @param {number} page
+   * @param {boolean} replace
    */
-  var renderReviews = function(reviews) {
-    reviewsContainer.innerHTML = '';
+  var renderReviews = function(reviews, page, replace) {
+    if (replace) {
+      reviewsContainer.innerHTML = '';
+    }
 
-    reviews.forEach(function(review) {
+    var from = page * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+
+    reviews.slice(from, to).forEach(function(review) {
       createReviewItem(review, reviewsContainer);
     });
   };
@@ -272,8 +295,9 @@
    * @param {Filter} filter
    */
   var setFilterEnabled = function(filter) {
-    var filteredReviews = getFilteredReviews(reviews, filter);
-    renderReviews(filteredReviews);
+    filteredReviews = getFilteredReviews(reviews, filter);
+    pageNumber = 0;
+    renderReviews(filteredReviews, pageNumber, true);
   };
 
   var setFiltersEnabled = function() {
@@ -285,9 +309,29 @@
     }
   };
 
+  /**
+   * @param {Array} reviews
+   * @param {number} page
+   * @param {number} pageSize
+   * @return {boolean}
+   */
+  var isNextPageAvailable = function(reviews, page, pageSize) {
+    return page < Math.floor(reviews.length / pageSize);
+  };
+
+  var setMoreButtonEnabled = function() {
+    moreButton.addEventListener('click', function() {
+      if (isNextPageAvailable(reviews, pageNumber, PAGE_SIZE)) {
+        pageNumber++;
+        renderReviews(filteredReviews, pageNumber);
+      }
+    });
+  };
+
   getReviews(function(loadedReviews) {
     reviews = loadedReviews;
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);
+    setMoreButtonEnabled();
   });
 })();
