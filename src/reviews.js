@@ -229,7 +229,7 @@
       return review.rating >= 3;
     });
 
-    reviews.sort(function(a, b) {
+    reviewList.sort(function(a, b) {
       return b.rating - a.rating;
     });
 
