@@ -178,11 +178,11 @@
   };
 
   /**
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    * @param {number} page
    * @param {boolean} replace
    */
-  var renderReviews = function(reviews, page, replace) {
+  var renderReviews = function(reviewList, page, replace) {
     if (replace) {
       reviewsContainer.innerHTML = '';
     }
@@ -190,7 +190,7 @@
     var from = page * PAGE_SIZE;
     var to = from + PAGE_SIZE;
 
-    reviews.slice(from, to).forEach(function(review) {
+    reviewList.slice(from, to).forEach(function(review) {
       createReviewItem(review, reviewsContainer);
     });
   };
@@ -198,34 +198,34 @@
   /**
    * Фильтр для отзывов, написанных за последние две недели.
    * Отзывы отрисовываются по убыванию даты.
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    */
-  var getRecentReviews = function(reviews) {
+  var getRecentReviews = function(reviewList) {
     var currentDate = new Date();
     var dayBeforeTwoWeeks = Math.floor(currentDate.valueOf() - TWO_WEEKS);
 
-    reviews = reviews.filter(function(review) {
+    reviewList = reviewList.filter(function(review) {
       var reviewDate = new Date(review.date).valueOf();
 
       return reviewDate >= dayBeforeTwoWeeks;
     });
 
-    reviews.sort(function(a, b) {
+    reviewList.sort(function(a, b) {
       var firstDate = new Date(a.date);
       var secondDate = new Date(b.date);
 
       return secondDate - firstDate;
     });
 
-    return reviews;
+    return reviewList;
   };
 
   /**
    * Фильтр для хороших отзывов (выводятся по убыванию рейтинга).
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    */
-  var getGoodReviews = function(reviews) {
-    reviews = reviews.filter(function(review) {
+  var getGoodReviews = function(reviewList) {
+    reviewList = reviewList.filter(function(review) {
       return review.rating >= 3;
     });
 
@@ -233,43 +233,43 @@
       return b.rating - a.rating;
     });
 
-    return reviews;
+    return reviewList;
   };
 
   /**
    * Фильтр для плохих отзывов (выводятся по возрастанию рейтинга).
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    */
-  var getBadReviews = function(reviews) {
-    reviews = reviews.filter(function(review) {
+  var getBadReviews = function(reviewList) {
+    reviewList = reviewList.filter(function(review) {
       return review.rating <= 2;
     });
 
-    reviews.sort(function(a, b) {
+    reviewList.sort(function(a, b) {
       return a.rating - b.rating;
     });
 
-    return reviews;
+    return reviewList;
   };
 
   /**
    * Фильтр для популярных отзывов (выводятся по убыванию оценки отзыва).
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    */
-  var getPopularReviews = function(reviews) {
+  var getPopularReviews = function(reviewList) {
     reviews.sort(function(a, b) {
       return b.review_usefulness - a.review_usefulness;
     });
-    return reviews;
+    return reviewList;
   };
 
   /**
    * Фильтрация отзывов.
-   * @param {Array.<Object>} reviews
+   * @param {Array.<Object>} reviewList
    * @param {string} filter
    */
-  var getFilteredReviews = function(reviews, filter) {
-    var reviewsToFilter = reviews.slice(0);
+  var getFilteredReviews = function(reviewList, filter) {
+    var reviewsToFilter = reviewList.slice(0);
 
     switch (filter) {
       case Filter.ALL:
@@ -325,13 +325,13 @@
   };
 
   /**
-   * @param {Array} reviews
+   * @param {Array} reviewList
    * @param {number} page
    * @param {number} pageSize
    * @return {boolean}
    */
-  var isNextPageAvailable = function(reviews, page, pageSize) {
-    return page < Math.floor(reviews.length / pageSize);
+  var isNextPageAvailable = function(reviewList, page, pageSize) {
+    return page < Math.floor(reviewList.length / pageSize);
   };
 
   var setMoreButtonEnabled = function() {
