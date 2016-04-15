@@ -30,6 +30,11 @@
   var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 
   /**
+   * @type {Array.<Object>}
+   */
+  var reviews = [];
+
+  /**
    * @enum {string}
    */
   var Filter = {
@@ -39,6 +44,11 @@
     'BAD': 'reviews-bad',
     'POPULAR': 'reviews-popular'
   };
+
+  /**
+   * @const {Filter}
+   */
+  var DEFAULT_FILTER = Filter.ALL;
 
   /**
    * @param {HTMLElement} review
@@ -260,28 +270,24 @@
 
   /**
    * @param {Filter} filter
-   * @param {Array.<Object>} reviews
    */
-  var setFilterEnabled = function(filter, reviews) {
+  var setFilterEnabled = function(filter) {
     var filteredReviews = getFilteredReviews(reviews, filter);
     renderReviews(filteredReviews);
   };
 
-  /**
-   * @param {Array.<Object>} reviews
-   */
-  var setFiltrsEnabled = function(reviews) {
+  var setFiltersEnabled = function() {
     var filters = filtersContainer.querySelectorAll('.reviews-filter input');
     for (var i = 0; i < filters.length; i++) {
       filters[i].onclick = function() {
-        setFilterEnabled(this.id, reviews);
+        setFilterEnabled(this.id);
       };
     }
   };
 
   getReviews(function(loadedReviews) {
-    var reviews = loadedReviews;
-    setFiltrsEnabled(reviews);
-    renderReviews(reviews);
+    reviews = loadedReviews;
+    setFiltersEnabled();
+    setFilterEnabled(DEFAULT_FILTER);
   });
 })();
