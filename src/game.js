@@ -843,4 +843,75 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
+  var clouds = document.querySelector('.header-clouds');
+  var demo = document.querySelector('.demo');
+
+  // Находим смещение фонового изображения по оси X.
+  // Так как в FF нельзя получить backgroundPositionX,
+  // сначала получаем общее свойство.
+  // Затем из общего свойства получаем первое значение без единиц измерения.
+  // '50% 0' -> 50
+  var cloudsBgPosition = getComputedStyle(clouds).backgroundPosition;
+  var cloudsBgPositionX = parseInt(cloudsBgPosition);
+
+  var moveClouds = function() {
+    var scrollPosition = clouds.getBoundingClientRect().top;
+    clouds.style.backgroundPosition = cloudsBgPositionX + scrollPosition / 5 + '% 0';
+  }
+
+  /**
+   * @param {HTMLElement} block
+   * @return {boolean}
+   */
+  var isVisible = function(block) {
+    var bottom = block.getBoundingClientRect().bottom;
+    return bottom > 0;
+  };
+
+  /**
+   * @param {Function} func
+   * @param {number} wait
+   * @return {Function}
+   */
+  var throttle = function(func, time) {
+    var previous_evoke = 0;
+
+    return function() {
+      var now = Date.now();
+      if (now - previous_evoke > time) {
+        previous_evoke = now;
+        return func();
+      }
+    };
+  };
+
+  /**
+   * Обрабатывает движение облаков при прокрутке и меняет состояние игры.
+   */
+  var handleScroll = (function() {
+    var cloudsAreVisible = true;
+    var gameIsVisible = true;
+
+    /**
+     * Проверка каждые 100 мсек, видны ли облака и область игры.
+     */
+    var checkVisibility = throttle(function() {
+      cloudsAreVisible = isVisible(clouds);
+      gameIsVisible = isVisible(demo);
+    }, 100);
+
+    return function() {
+      checkVisibility();
+
+      if (cloudsAreVisible) {
+        moveClouds();
+      }
+      if (!gameIsVisible) {
+        game.setGameStatus(window.Game.Verdict.PAUSE);
+      }
+    }
+  })();
+
+  window.addEventListener('scroll', handleScroll);
 })();
