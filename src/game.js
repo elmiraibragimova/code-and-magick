@@ -853,12 +853,12 @@
   // Затем из общего свойства получаем первое значение без единиц измерения.
   // '50% 0' -> 50
   var cloudsBgPosition = getComputedStyle(clouds).backgroundPosition;
-  var cloudsBgPositionX = parseInt(cloudsBgPosition);
+  var cloudsBgPositionX = parseInt(cloudsBgPosition, 10);
 
   var moveClouds = function() {
     var scrollPosition = clouds.getBoundingClientRect().top;
     clouds.style.backgroundPosition = cloudsBgPositionX + scrollPosition / 5 + '% 0';
-  }
+  };
 
   /**
    * @param {HTMLElement} block
@@ -875,14 +875,15 @@
    * @return {Function}
    */
   var throttle = function(func, time) {
-    var previous_evoke = 0;
+    var previousEvoke = 0;
 
     return function() {
       var now = Date.now();
-      if (now - previous_evoke > time) {
-        previous_evoke = now;
+      if (now - previousEvoke > time) {
+        previousEvoke = now;
         return func();
       }
+      return null;
     };
   };
 
@@ -910,7 +911,7 @@
       if (!gameIsVisible) {
         game.setGameStatus(window.Game.Verdict.PAUSE);
       }
-    }
+    };
   })();
 
   window.addEventListener('scroll', handleScroll);
