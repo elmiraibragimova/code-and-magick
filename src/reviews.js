@@ -320,6 +320,9 @@
 
         var filter = evt.target.getAttribute('for');
         setFilterEnabled(filter);
+
+        var input = document.querySelector('#' + filter);
+        input.checked = true;
       }
     });
   };
