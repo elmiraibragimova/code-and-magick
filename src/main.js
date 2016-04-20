@@ -1,4 +1,7 @@
 'use strict';
 
-require(['./form/form']);
-
+require([
+  './form/form',
+  './reviews/reviews',
+  '/game'
+]);
