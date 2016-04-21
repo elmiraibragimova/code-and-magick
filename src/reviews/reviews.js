@@ -64,6 +64,8 @@ define([
     reviewList.slice(from, to).forEach(function(review) {
       createReview(review, reviewsContainer);
     });
+
+    utils.toggleVisibility(moreButton, isNextPageAvailable(reviewList, page + 1, PAGE_SIZE));
   };
 
   /**
@@ -109,15 +111,13 @@ define([
    * @return {boolean}
    */
   var isNextPageAvailable = function(reviewList, page, pageSize) {
-    return page < Math.floor(reviewList.length / pageSize);
+    return page < Math.ceil(reviewList.length / pageSize);
   };
 
   var setMoreButtonEnabled = function() {
     moreButton.addEventListener('click', function() {
-      if (isNextPageAvailable(reviews, pageNumber, PAGE_SIZE)) {
-        pageNumber++;
-        renderReviews(filteredReviews, pageNumber);
-      }
+      pageNumber++;
+      renderReviews(filteredReviews, pageNumber);
     });
   };
 
@@ -128,7 +128,6 @@ define([
     reviews = loadedReviews;
 
     utils.toggleVisibility(filtersContainer, true);
-    utils.toggleVisibility(moreButton, true);
 
     setFiltersEnabled();
     setFilterEnabled(DEFAULT_FILTER);

@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Компонента игры.
  */
 
 'use strict';
