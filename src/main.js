@@ -3,5 +3,5 @@
 require([
   './form/form',
   './reviews/reviews',
-  '/game'
+  './game'
 ]);
