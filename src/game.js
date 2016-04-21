@@ -1,6 +1,12 @@
+/**
+ * @fileoverview Компонента игры.
+ */
+
 'use strict';
 
-(function() {
+define([
+  './utils'
+], function(utils) {
   /**
    * @const
    * @type {number}
@@ -861,33 +867,6 @@
   };
 
   /**
-   * @param {HTMLElement} block
-   * @return {boolean}
-   */
-  var isVisible = function(block) {
-    var bottom = block.getBoundingClientRect().bottom;
-    return bottom > 0;
-  };
-
-  /**
-   * @param {Function} func
-   * @param {number} wait
-   * @return {Function}
-   */
-  var throttle = function(func, time) {
-    var previousEvoke = 0;
-
-    return function() {
-      var now = Date.now();
-      if (now - previousEvoke > time) {
-        previousEvoke = now;
-        return func();
-      }
-      return null;
-    };
-  };
-
-  /**
    * Обрабатывает движение облаков при прокрутке и меняет состояние игры.
    */
   var handleScroll = (function() {
@@ -897,9 +876,9 @@
     /**
      * Проверка каждые 100 мсек, видны ли облака и область игры.
      */
-    var checkVisibility = throttle(function() {
-      cloudsAreVisible = isVisible(clouds);
-      gameIsVisible = isVisible(demo);
+    var checkVisibility = utils.throttle(function() {
+      cloudsAreVisible = utils.isVisible(clouds);
+      gameIsVisible = utils.isVisible(demo);
     }, 100);
 
     return function() {
@@ -915,4 +894,4 @@
   })();
 
   window.addEventListener('scroll', handleScroll);
-})();
+});
