@@ -32,7 +32,7 @@ define([
   };
 
   var checkReviewForm = function() {
-    validate.validateReviewForm(formText, marks, formName, formButtonSubmit);
+    validate(formText, marks, formName, formButtonSubmit);
     cookies.setReviewFormCookies(marks, formName);
   };
 
@@ -54,7 +54,7 @@ define([
     evt.preventDefault();
 
     cookies.setPreviousValues(marks, formName);
-    validate.validateReviewForm(formText, marks, formName, formButtonSubmit);
+    validate(formText, marks, formName, formButtonSubmit);
 
     utils.toggleVisibility(formContainer, true);
   };
