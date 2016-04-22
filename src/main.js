@@ -1,7 +1,7 @@
 'use strict';
 
-require([
+define ([
   './form/form',
   './reviews/reviews',
   './game'
-]);
+], function() {});
