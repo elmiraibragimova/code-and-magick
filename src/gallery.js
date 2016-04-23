@@ -80,21 +80,21 @@ define([
     _closeGallery();
   };
 
-  var _onCloseEsc = function(evt) {
+  var _onDocumentKeyDown = function(evt) {
     if (evt.keyCode === 27) {
       _closeGallery();
     }
   };
 
   var _initGalleryControls = function() {
-    window.addEventListener('keydown', _onCloseEsc);
+    document.addEventListener('keydown', _onDocumentKeyDown);
     buttonClose.addEventListener('click', _onCloseClick);
     buttonNext.addEventListener('click', _selectNext);
     buttonPrev.addEventListener('click', _selectPrev);
   };
 
   var _removeGalleryControls = function() {
-    window.removeEventListener('keydown', _onCloseEsc);
+    document.removeEventListener('keydown', _onDocumentKeyDown);
     buttonClose.removeEventListener('click', _onCloseClick);
     buttonNext.removeEventListener('click', _selectNext);
     buttonPrev.removeEventListener('click', _selectPrev);
