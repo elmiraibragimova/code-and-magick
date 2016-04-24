@@ -28,6 +28,15 @@ define([
   var currentPhotoIndex;
 
   /**
+   * @enum {number}
+   */
+  var KeyCode = {
+    'ESC': 27,
+    'LEFT': 37,
+    'RIGHT': 39
+  };
+
+  /**
    * @param {number} currentIndex
    */
   var _showCurrentPhoto = function() {
@@ -75,8 +84,16 @@ define([
   };
 
   var _onDocumentKeyDown = function(evt) {
-    if (evt.keyCode === 27) {
-      _closeGallery();
+    switch (evt.keyCode) {
+      case KeyCode.ESC:
+        _closeGallery();
+        break;
+      case KeyCode.LEFT:
+        _selectPrev();
+        break;
+      case KeyCode.RIGHT:
+        _selectNext();
+        break;
     }
   };
 
