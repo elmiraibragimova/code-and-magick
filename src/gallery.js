@@ -28,6 +28,11 @@ define([
   var currentPhotoIndex;
 
   /**
+   * @type {HTMLImageElement}
+   */
+  var photo;
+
+  /**
    * @enum {number}
    */
   var KeyCode = {
@@ -36,22 +41,8 @@ define([
     'RIGHT': 39
   };
 
-  /**
-   * @param {number} currentIndex
-   */
   var _showCurrentPhoto = function() {
-    var currentImage = photoBox.querySelector('img');
-    if (currentImage) {
-      photoBox.removeChild(currentImage);
-      currentImage = null;
-    }
-
-    var image = new Image();
-    image.onload = function() {
-      photoBox.appendChild(image);
-    };
-
-    image.src = photos[currentPhotoIndex];
+    photo.src = photos[currentPhotoIndex];
 
     var photoNumber = currentPhotoIndex + 1;
     currentNumber.innerHTML = photoNumber + '';
@@ -59,6 +50,7 @@ define([
     utils.toggleVisibility(buttonNext, photoNumber < photos.length);
     utils.toggleVisibility(buttonPrev, photoNumber > 1);
   };
+
 
   var _selectPrev = function() {
     if (currentPhotoIndex > 0 ) {
@@ -116,6 +108,10 @@ define([
      * @param {string} currentPhoto
      */
     openGallery: function(currentIndex) {
+      if (!photoBox.querySelector('img')) {
+        photo = photoBox.appendChild(new Image());
+      }
+
       totalNumber.innerHTML = photos.length + '';
 
       utils.toggleVisibility(gallery, true);
