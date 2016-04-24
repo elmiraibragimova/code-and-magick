@@ -122,7 +122,7 @@ define([
       _initGalleryControls();
 
       currentPhotoIndex = parseInt(currentIndex, 10);
-      _showCurrentPhoto(currentPhotoIndex);
+      _showCurrentPhoto();
     },
 
     /**
