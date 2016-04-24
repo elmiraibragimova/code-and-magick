@@ -18,7 +18,7 @@ define([
     evt.preventDefault();
 
     if (evt.target.tagName === 'IMG') {
-      var currentPhoto = evt.target.src;
+      var currentPhoto = evt.target.dataset.number;
       gallery.openGallery(currentPhoto);
     }
   });

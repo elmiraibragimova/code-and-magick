@@ -23,9 +23,14 @@ define([
   var photos = [];
 
   /**
+   * @type {number}
+   */
+  var currentPhotoIndex;
+
+  /**
    * @param {number} currentIndex
    */
-  var _showPhoto = function(currentIndex) {
+  var _showCurrentPhoto = function() {
     var currentImage = photoBox.querySelector('img');
     if (currentImage) {
       photoBox.removeChild(currentImage);
@@ -37,9 +42,9 @@ define([
       photoBox.appendChild(image);
     };
 
-    image.src = photos[currentIndex];
+    image.src = photos[currentPhotoIndex];
 
-    var photoNumber = currentIndex + 1;
+    var photoNumber = currentPhotoIndex + 1;
     currentNumber.innerHTML = photoNumber + '';
 
     utils.toggleVisibility(buttonNext, photoNumber < photos.length);
@@ -47,28 +52,17 @@ define([
   };
 
   var _selectPrev = function() {
-    var currentIndex = _getCurrentIndex();
-
-    if (currentIndex > 0 ) {
-      currentIndex--;
-      _showPhoto(currentIndex);
+    if (currentPhotoIndex > 0 ) {
+      currentPhotoIndex -= 1;
+      _showCurrentPhoto();
     }
   };
 
   var _selectNext = function() {
-    var currentIndex = _getCurrentIndex();
-
-    if (currentIndex < photos.length - 1) {
-      currentIndex++;
-      _showPhoto(currentIndex);
+    if (currentPhotoIndex < photos.length - 1) {
+      currentPhotoIndex += 1;
+      _showCurrentPhoto();
     }
-  };
-
-  var _getCurrentIndex = function() {
-    var currentPhoto = photoBox.querySelector('img');
-    var currentSrc = currentPhoto.src;
-
-    return photos.indexOf(currentSrc);
   };
 
   var _closeGallery = function() {
@@ -104,14 +98,14 @@ define([
     /**
      * @param {string} currentPhoto
      */
-    openGallery: function(currentPhoto) {
-      var currentIndex = photos.indexOf(currentPhoto);
-      _showPhoto(currentIndex);
-
+    openGallery: function(currentIndex) {
       totalNumber.innerHTML = photos.length + '';
 
       utils.toggleVisibility(gallery, true);
       _initGalleryControls();
+
+      currentPhotoIndex = parseInt(currentIndex, 10);
+      _showCurrentPhoto(currentPhotoIndex);
     },
 
     /**
@@ -120,8 +114,8 @@ define([
     initPhotos: function(previews) {
       for (var i = 0; i < previews.length; i++) {
         photos.push(previews[i].src);
+        previews[i].dataset.number = i;
       }
     }
   };
-
 });
