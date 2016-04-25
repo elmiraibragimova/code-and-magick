@@ -58,15 +58,10 @@ define([], function() {
   var insertMark = function(review, rating) {
     var mark = review.querySelector('.review-rating');
 
-    var marks = {
-      2: 'two',
-      3: 'three',
-      4: 'four',
-      5: 'five'
-    };
+    var marks = ['two', 'three', 'four', 'five'];
 
     if (rating > 1 && rating <= 5) {
-      mark.classList.add('review-rating-' + marks[rating]);
+      mark.classList.add('review-rating-' + marks[rating - 2]);
     }
   };
 
