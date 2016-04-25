@@ -47,8 +47,8 @@ define([
     var photoNumber = currentPhotoIndex + 1;
     currentNumber.innerHTML = photoNumber + '';
 
-    utils.toggleVisibility(buttonNext, photoNumber < photos.length);
-    utils.toggleVisibility(buttonPrev, photoNumber > 1);
+    utils.toggleVisibility(buttonNext, currentPhotoIndex < photos.length - 1);
+    utils.toggleVisibility(buttonPrev, currentPhotoIndex > 0);
   };
 
 
