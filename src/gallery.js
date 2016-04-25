@@ -123,9 +123,7 @@ define([
      * @param {NodeList} previews
      */
     savePhotos: function(previews) {
-      for (var i = 0; i < previews.length; i++) {
-        photos.push(previews[i]);
-      }
+      photos = previews.slice();
     }
   };
 });
