@@ -46,7 +46,7 @@ define([
    */
   var pageNumber = 0;
 
-  /********
+  /**
    * @type {Array.<Review>}
    */
   var renderedReviews = [];
@@ -59,7 +59,6 @@ define([
    */
   var renderReviews = function(reviewList, page, replace) {
     if (replace) {
-      // reviewsContainer.innerHTML = '';
       renderedReviews.forEach(function(review) {
         review.remove();
       });
