@@ -2,7 +2,7 @@
 
 define([
   './form/form',
-  './reviews/reviews',
+  './reviews/renderReviews',
   './game',
   './gallery'
 ], function(form, reviews, game, gallery) {
