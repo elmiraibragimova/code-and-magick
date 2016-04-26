@@ -110,6 +110,7 @@ define([], function() {
     },
 
     /**
+     * param {ClickEvent} evt
      * @private
      */
     _onQuizAnswer: function(evt) {
