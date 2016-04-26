@@ -5,7 +5,7 @@ define([
   './reviews/renderReviews',
   './game',
   './gallery'
-], function(form, reviews, game, gallery) {
+], function(form, reviews, game, Gallery) {
 
   var photoContainer = document.querySelector('.photogallery');
   var previews = photoContainer.querySelectorAll('img');
@@ -23,7 +23,7 @@ define([
 
   var previewsSrc = getPreviewsSrc();
 
-  gallery.savePhotos(previewsSrc);
+  var gallery = new Gallery(previewsSrc);
 
   photoContainer.addEventListener('click', function(evt) {
     evt.preventDefault();
