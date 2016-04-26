@@ -20,15 +20,21 @@ define([], function() {
    * @constructor
    */
   var Review = function(data, container) {
+    self = this;
+
     this.data = data;
     this.element = this._getReview();
+    container.appendChild(this.element);
 
     this.element.addEventListener('click', this._onQuizAnswer);
-
-    container.appendChild(this.element);
   };
 
   Review.prototype = {
+    /**
+     * @const {string}
+     */
+    ACTIVE_CLASSNAME: 'review-quiz-answer-active',
+
     /**
      * @const {number}
      */
@@ -61,7 +67,7 @@ define([], function() {
       var loadTimeout = setTimeout(function() {
         author.src = '';
         review.classList.add('review-load-failure');
-      }, this.IMAGE_LOAD_TIMEOUT);
+      }, self.IMAGE_LOAD_TIMEOUT);
 
       authorImage.src = this.data.author.picture;
     },
@@ -108,7 +114,13 @@ define([], function() {
      */
     _onQuizAnswer: function(evt) {
       if (evt.target.classList.contains('review-quiz-answer')) {
-        evt.target.classList.add('review-quiz-answer-active');
+        var activeAnswer = evt.target.parentNode.querySelector('.' + self.ACTIVE_CLASSNAME);
+
+        if (activeAnswer) {
+          activeAnswer.classList.remove(self.ACTIVE_CLASSNAME);
+        }
+
+        evt.target.classList.add(self.ACTIVE_CLASSNAME);
       }
     },
 
