@@ -1,15 +1,10 @@
 /**
- * @fileoverview Отрисовка отзыва.
+ * @fileoverview Конструктор для создания отзыва.
  */
 
 'use strict';
 
 define([], function() {
-  /**
-   * @const {number}
-   */
-  var IMAGE_LOAD_TIMEOUT = 10000;
-
   var template = document.querySelector('template');
   var sample;
 
@@ -20,70 +15,119 @@ define([], function() {
   }
 
   /**
-   * @param {HTMLElement} review
-   * @param {Object} path
+   * @const {string}
    */
-  var insertImage = function(review, path) {
-    var author = review.querySelector('.review-author');
-
-    var authorImage = new Image(124, 124);
-
-    authorImage.title = author.title = path.name;
-    authorImage.alt = author.alt = 'Фотография пользователя ' + path.name;
-
-    authorImage.onload = function() {
-      clearTimeout(loadTimeout);
-
-      authorImage.classList.add('review-author');
-      review.replaceChild(authorImage, author);
-    };
-
-    authorImage.onerror = function() {
-      clearTimeout(loadTimeout);
-      review.classList.add('review-load-failure');
-    };
-
-    var loadTimeout = setTimeout(function() {
-      author.src = '';
-      review.classList.add('review-load-failure');
-    }, IMAGE_LOAD_TIMEOUT);
-
-    authorImage.src = path.picture;
-  };
+  var ACTIVE_CLASSNAME = 'review-quiz-answer-active';
 
   /**
-   * @param {HTMLElement} review
-   * @param {number} rating
+   * @const {number}
    */
-  var insertMark = function(review, rating) {
-    var mark = review.querySelector('.review-rating');
-
-    var marks = ['two', 'three', 'four', 'five'];
-
-    if (rating > 1 && rating <= 5) {
-      mark.classList.add('review-rating-' + marks[rating - 2]);
-    }
-  };
+  var IMAGE_LOAD_TIMEOUT = 10000;
 
   /**
    * @param {Object} data
-   * @param {HTMLElement} container
+   * @param {Element} container
+   * @constructor
    */
-  return function(data, container) {
-    // Клонируем структуру шаблона.
-    var reviewItem = sample.cloneNode(true);
+  var Review = function(data, container) {
+    this.data = data;
+    this.element = this._getReview();
+    container.appendChild(this.element);
 
-    // Вставляем текст отзыва.
-    var description = reviewItem.querySelector('.review-text');
-    description.textContent = data.description;
-
-    // Вставляем оценку.
-    insertMark(reviewItem, data.rating);
-
-    // Вставляем изображение.
-    insertImage(reviewItem, data.author);
-
-    // Вставляем отзыв в разметку.
-    container.appendChild(reviewItem);
+    this.element.addEventListener('click', this._onQuizAnswer);
   };
+
+  Review.prototype = {
+    /**
+     * @param {HTMLElement} review
+     * @private
+     */
+    _insertImage: function(review) {
+      var author = review.querySelector('.review-author');
+
+      var authorImage = new Image(124, 124);
+
+      authorImage.title = author.title = this.data.author.name;
+      authorImage.alt = author.alt = 'Фотография пользователя ' + this.data.author.name;
+
+      authorImage.onload = function() {
+        clearTimeout(loadTimeout);
+
+        authorImage.classList.add('review-author');
+        review.replaceChild(authorImage, author);
+      };
+
+      authorImage.onerror = function() {
+        clearTimeout(loadTimeout);
+        review.classList.add('review-load-failure');
+      };
+
+      var loadTimeout = setTimeout(function() {
+        author.src = '';
+        review.classList.add('review-load-failure');
+      }, IMAGE_LOAD_TIMEOUT);
+
+      authorImage.src = this.data.author.picture;
+    },
+
+    /**
+     * @param {HTMLElement} review
+     * @private
+     */
+    _insertMark: function(review) {
+      var mark = review.querySelector('.review-rating');
+      var rating = this.data.rating;
+
+      var marks = ['two', 'three', 'four', 'five'];
+
+      if (rating > 1 && rating <= 5) {
+        mark.classList.add('review-rating-' + marks[rating - 2]);
+      }
+    },
+
+    /**
+     * Создание DOM-элемента отзыва.
+     * @return {HTMLElement}
+     * @private
+     */
+    _getReview: function() {
+      // Клонируем структуру шаблона.
+      var reviewItem = sample.cloneNode(true);
+
+      // Вставляем текст отзыва.
+      var description = reviewItem.querySelector('.review-text');
+      description.textContent = this.data.description;
+
+      // Вставляем оценку.
+      this._insertMark(reviewItem);
+
+      // Вставляем изображение.
+      this._insertImage(reviewItem);
+
+      return reviewItem;
+    },
+
+    /**
+     * param {ClickEvent} evt
+     * @private
+     */
+    _onQuizAnswer: function(evt) {
+      if (evt.target.classList.contains('review-quiz-answer')) {
+        var activeAnswer = evt.target.parentNode.querySelector('.' + ACTIVE_CLASSNAME);
+
+        if (activeAnswer) {
+          activeAnswer.classList.remove(ACTIVE_CLASSNAME);
+        }
+
+        evt.target.classList.add(ACTIVE_CLASSNAME);
+      }
+    },
+
+    remove: function() {
+      this.element.removeEventListener('click', this._getQuizAnswer);
+      this.element.parentNode.removeChild(this.element);
+    }
+  };
+
+  return Review;
 });

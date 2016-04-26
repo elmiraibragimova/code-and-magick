@@ -10,7 +10,7 @@ define([
   '../filter/filter',
   '../filter/filter-type',
   './review'
-], function(utils, loader, filter, Filter, createReview) {
+], function(utils, loader, filter, Filter, Review) {
   var filtersContainer = document.querySelector('.reviews-filter');
   var moreButton = document.querySelector('.reviews-controls-more');
 
@@ -46,6 +46,10 @@ define([
    */
   var pageNumber = 0;
 
+  /**
+   * @type {Array.<Review>}
+   */
+  var renderedReviews = [];
 
 
   /**
@@ -55,14 +59,18 @@ define([
    */
   var renderReviews = function(reviewList, page, replace) {
     if (replace) {
-      reviewsContainer.innerHTML = '';
+      renderedReviews.forEach(function(review) {
+        review.remove();
+      });
+
+      renderedReviews = [];
     }
 
     var from = page * PAGE_SIZE;
     var to = from + PAGE_SIZE;
 
     reviewList.slice(from, to).forEach(function(review) {
-      createReview(review, reviewsContainer);
+      renderedReviews.push(new Review(review, reviewsContainer));
     });
 
     utils.toggleVisibility(moreButton, isNextPageAvailable(reviewList, page + 1, PAGE_SIZE));
