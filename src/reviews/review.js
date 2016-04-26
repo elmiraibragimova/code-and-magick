@@ -15,13 +15,21 @@ define([], function() {
   }
 
   /**
+   * @const {string}
+   */
+  var ACTIVE_CLASSNAME = 'review-quiz-answer-active';
+
+  /**
+   * @const {number}
+   */
+  var IMAGE_LOAD_TIMEOUT = 10000;
+
+  /**
    * @param {Object} data
    * @param {Element} container
    * @constructor
    */
   var Review = function(data, container) {
-    self = this;
-
     this.data = data;
     this.element = this._getReview();
     container.appendChild(this.element);
@@ -30,16 +38,6 @@ define([], function() {
   };
 
   Review.prototype = {
-    /**
-     * @const {string}
-     */
-    ACTIVE_CLASSNAME: 'review-quiz-answer-active',
-
-    /**
-     * @const {number}
-     */
-    IMAGE_LOAD_TIMEOUT: 10000,
-
     /**
      * @param {HTMLElement} review
      * @private
@@ -67,7 +65,7 @@ define([], function() {
       var loadTimeout = setTimeout(function() {
         author.src = '';
         review.classList.add('review-load-failure');
-      }, self.IMAGE_LOAD_TIMEOUT);
+      }, IMAGE_LOAD_TIMEOUT);
 
       authorImage.src = this.data.author.picture;
     },
@@ -115,13 +113,13 @@ define([], function() {
      */
     _onQuizAnswer: function(evt) {
       if (evt.target.classList.contains('review-quiz-answer')) {
-        var activeAnswer = evt.target.parentNode.querySelector('.' + self.ACTIVE_CLASSNAME);
+        var activeAnswer = evt.target.parentNode.querySelector('.' + ACTIVE_CLASSNAME);
 
         if (activeAnswer) {
-          activeAnswer.classList.remove(self.ACTIVE_CLASSNAME);
+          activeAnswer.classList.remove(ACTIVE_CLASSNAME);
         }
 
-        evt.target.classList.add(self.ACTIVE_CLASSNAME);
+        evt.target.classList.add(ACTIVE_CLASSNAME);
       }
     },
 
