@@ -4,7 +4,7 @@
 
 'use strict';
 
-define([], function() {
+define(function() {
   var template = document.querySelector('template');
   var sample;
 

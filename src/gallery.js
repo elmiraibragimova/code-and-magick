@@ -18,11 +18,6 @@ define([
   var totalNumber = gallery.querySelector('.preview-number-total');
 
   /**
-   * @type {Array.<string>}
-   */
-  var photos = [];
-
-  /**
    * @type {number}
    */
   var currentPhotoIndex;
@@ -41,89 +36,98 @@ define([
     'RIGHT': 39
   };
 
-  var _showCurrentPhoto = function() {
-    photo.src = photos[currentPhotoIndex];
-
-    var photoNumber = currentPhotoIndex + 1;
-    currentNumber.innerHTML = photoNumber + '';
-
-    utils.toggleVisibility(buttonNext, currentPhotoIndex < photos.length - 1);
-    utils.toggleVisibility(buttonPrev, currentPhotoIndex > 0);
-  };
-
-  var _selectPrev = function() {
-    if (currentPhotoIndex > 0 ) {
-      currentPhotoIndex -= 1;
-      _showCurrentPhoto();
-    }
-  };
-
-  var _selectNext = function() {
-    if (currentPhotoIndex < photos.length - 1) {
-      currentPhotoIndex += 1;
-      _showCurrentPhoto();
-    }
-  };
-
-  var _closeGallery = function() {
-    utils.toggleVisibility(gallery, false);
-    _removeGalleryControls();
-  };
-
-  var _onCloseClick = function() {
-    _closeGallery();
-  };
-
-  var _onDocumentKeyDown = function(evt) {
-    switch (evt.keyCode) {
-      case KeyCode.ESC:
-        _closeGallery();
-        break;
-      case KeyCode.LEFT:
-        _selectPrev();
-        break;
-      case KeyCode.RIGHT:
-        _selectNext();
-        break;
-    }
-  };
-
-  var _setGalleryControls = function() {
-    document.addEventListener('keydown', _onDocumentKeyDown);
-    buttonClose.addEventListener('click', _onCloseClick);
-    buttonNext.addEventListener('click', _selectNext);
-    buttonPrev.addEventListener('click', _selectPrev);
-  };
-
-  var _removeGalleryControls = function() {
-    document.removeEventListener('keydown', _onDocumentKeyDown);
-    buttonClose.removeEventListener('click', _onCloseClick);
-    buttonNext.removeEventListener('click', _selectNext);
-    buttonPrev.removeEventListener('click', _selectPrev);
-  };
-
-  return {
+  var Gallery = function() {
     /**
-     * @param {string} currentIndex
+     * @type {Array.<string>}
      */
+    this.photos = [];
+
+    this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
+    this._onCloseClick = this._onCloseClick.bind(this);
+    this._selectNext = this._selectNext.bind(this);
+    this._selectPrev = this._selectPrev.bind(this);
+  };
+
+  Gallery.prototype = {
+    _showCurrentPhoto: function() {
+      photo.src = this.photos[currentPhotoIndex];
+
+      var photoNumber = currentPhotoIndex + 1;
+      currentNumber.innerHTML = photoNumber + '';
+
+      utils.toggleVisibility(buttonNext, currentPhotoIndex < this.photos.length - 1);
+      utils.toggleVisibility(buttonPrev, currentPhotoIndex > 0);
+    },
+
+    _selectPrev: function() {
+      if (currentPhotoIndex > 0 ) {
+        currentPhotoIndex -= 1;
+        this._showCurrentPhoto();
+      }
+    },
+
+    _selectNext: function() {
+      if (currentPhotoIndex < this.photos.length - 1) {
+        currentPhotoIndex += 1;
+        this._showCurrentPhoto();
+      }
+    },
+
+    _closeGallery: function() {
+      utils.toggleVisibility(gallery, false);
+      this._removeGalleryControls();
+    },
+
+    _onCloseClick: function() {
+      this._closeGallery();
+    },
+
+    _onDocumentKeyDown: function(evt) {
+      switch (evt.keyCode) {
+        case KeyCode.ESC:
+          this._closeGallery();
+          break;
+        case KeyCode.LEFT:
+          this._selectPrev();
+          break;
+        case KeyCode.RIGHT:
+          this._selectNext();
+          break;
+      }
+    },
+
+    _setGalleryControls: function() {
+      document.addEventListener('keydown', this._onDocumentKeyDown);
+      buttonClose.addEventListener('click', this._onCloseClick);
+      buttonNext.addEventListener('click', this._selectNext);
+      buttonPrev.addEventListener('click', this._selectPrev);
+    },
+
+    _removeGalleryControls: function() {
+      document.removeEventListener('keydown', this._onDocumentKeyDown);
+      buttonClose.removeEventListener('click', this._onCloseClick);
+      buttonNext.removeEventListener('click', this._selectNext);
+      buttonPrev.removeEventListener('click', this._selectPrev);
+    },
+
     openGallery: function(currentIndex) {
       if (!photoBox.querySelector('img')) {
         photo = photoBox.appendChild(new Image());
       }
 
-      totalNumber.innerHTML = photos.length + '';
+      totalNumber.innerHTML = this.photos.length + '';
 
       utils.toggleVisibility(gallery, true);
-      _setGalleryControls();
+      this._setGalleryControls();
 
       currentPhotoIndex = parseInt(currentIndex, 10);
-      _showCurrentPhoto();
+      this._showCurrentPhoto();
     },
-    /**
-     * @param {NodeList} previews
-     */
+
     savePhotos: function(previews) {
-      photos = previews.slice();
+      this.photos = previews.slice();
     }
   };
+
+  return new Gallery();
 });
