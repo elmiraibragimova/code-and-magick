@@ -36,8 +36,11 @@ define([
     'RIGHT': 39
   };
 
-  var Gallery = function(previews) {
-    this.photos = previews.slice();
+  var Gallery = function() {
+    /**
+     * @type {Array.<string>}
+     */
+    this.photos = [];
 
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
@@ -70,27 +73,13 @@ define([
       }
     },
 
-    _setGalleryControls: function() {
-      document.addEventListener('keydown', this._onDocumentKeyDown);
-      buttonClose.addEventListener('click', this._onCloseClick);
-      buttonNext.addEventListener('click', this._selectNext);
-      buttonPrev.addEventListener('click', this._selectPrev);
-    },
-
-    _removeGalleryControls: function() {
-      document.removeEventListener('keydown', this._onDocumentKeyDown);
-      buttonClose.removeEventListener('click', this._onCloseClick);
-      buttonNext.removeEventListener('click', this._selectNext);
-      buttonPrev.removeEventListener('click', this._selectPrev);
+    _closeGallery: function() {
+      utils.toggleVisibility(gallery, false);
+      this._removeGalleryControls();
     },
 
     _onCloseClick: function() {
       this._closeGallery();
-    },
-
-    _closeGallery: function() {
-      utils.toggleVisibility(gallery, false);
-      this._removeGalleryControls();
     },
 
     _onDocumentKeyDown: function(evt) {
@@ -107,9 +96,20 @@ define([
       }
     },
 
-    /**
-     * @param {number} currentIndex
-     */
+    _setGalleryControls: function() {
+      document.addEventListener('keydown', this._onDocumentKeyDown);
+      buttonClose.addEventListener('click', this._onCloseClick);
+      buttonNext.addEventListener('click', this._selectNext);
+      buttonPrev.addEventListener('click', this._selectPrev);
+    },
+
+    _removeGalleryControls: function() {
+      document.removeEventListener('keydown', this._onDocumentKeyDown);
+      buttonClose.removeEventListener('click', this._onCloseClick);
+      buttonNext.removeEventListener('click', this._selectNext);
+      buttonPrev.removeEventListener('click', this._selectPrev);
+    },
+
     openGallery: function(currentIndex) {
       if (!photoBox.querySelector('img')) {
         photo = photoBox.appendChild(new Image());
@@ -122,8 +122,12 @@ define([
 
       currentPhotoIndex = parseInt(currentIndex, 10);
       this._showCurrentPhoto();
+    },
+
+    savePhotos: function(previews) {
+      this.photos = previews.slice();
     }
   };
 
-  return Gallery;
+  return new Gallery();
 });
