@@ -12,6 +12,8 @@ define([
   './review'
 ], function(utils, loader, filter, Filter, Review) {
   var filtersContainer = document.querySelector('.reviews-filter');
+  var reviewsFilter = filtersContainer.elements['reviews'];
+
   var moreButton = document.querySelector('.reviews-controls-more');
 
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -25,6 +27,11 @@ define([
    * @type {Filter.<string>}
    */
   var defaultFilter = Filter.ALL;
+
+  /**
+   * @type {string}
+   */
+  var storageFilterKey = 'last-filter';
 
   /**
    * @const {number}
@@ -80,15 +87,14 @@ define([
    * @param {Filter} filterType
    */
   var setFilterEnabled = function(filterType) {
-    localStorage.lastFilter = filterType;
+    localStorage.setItem(storageFilterKey, filterType);
 
     filteredReviews = filter(reviews, filterType);
     pageNumber = 0;
 
     renderReviews(filteredReviews, pageNumber, true);
 
-    var input = document.querySelector('#' + filterType);
-    input.checked = true;
+    reviewsFilter.value = filterType;
   };
 
   var setFiltersEnabled = function() {
@@ -134,18 +140,18 @@ define([
   utils.toggleVisibility(filtersContainer, false);
 
   loader(REVIEWS_LOAD_URL, function(loadedReviews) {
+    var storageFilterValue = localStorage.getItem(storageFilterKey);
+
+    if (storageFilterValue) {
+      defaultFilter = storageFilterValue;
+    }
+
     reviews = loadedReviews;
 
     utils.toggleVisibility(filtersContainer, true);
 
     setFiltersEnabled();
-
-    if (localStorage.lastFilter) {
-      defaultFilter = localStorage.lastFilter;
-    }
-
     setFilterEnabled(defaultFilter);
-
     setMoreButtonEnabled();
   });
 });
