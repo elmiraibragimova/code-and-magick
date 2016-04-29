@@ -22,9 +22,9 @@ define([
   var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 
   /**
-   * @const {Filter.<string>}
+   * @type {Filter.<string>}
    */
-  var DEFAULT_FILTER = Filter.ALL;
+  var defaultFilter = Filter.ALL;
 
   /**
    * @const {number}
@@ -141,10 +141,10 @@ define([
     setFiltersEnabled();
 
     if (localStorage.lastFilter) {
-      DEFAULT_FILTER = localStorage.lastFilter;
+      defaultFilter = localStorage.lastFilter;
     }
 
-    setFilterEnabled(DEFAULT_FILTER);
+    setFilterEnabled(defaultFilter);
 
     setMoreButtonEnabled();
   });
