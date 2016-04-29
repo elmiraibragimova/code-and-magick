@@ -80,18 +80,22 @@ define([
    * @param {Filter} filterType
    */
   var setFilterEnabled = function(filterType) {
+    localStorage.lastFilter = filterType;
+
     filteredReviews = filter(reviews, filterType);
     pageNumber = 0;
 
     renderReviews(filteredReviews, pageNumber, true);
+
+    var input = document.querySelector('#' + filterType);
+    input.checked = true;
   };
 
   var setFiltersEnabled = function() {
     filtersContainer.addEventListener('click', function(evt) {
-      var label = evt.target.classList.contains('reviews-filter-item');
       var input = evt.target.nodeName === 'INPUT';
 
-      if (label || input) {
+      if (input) {
         setFilterEnabled(evt.target.id);
       }
     });
@@ -105,9 +109,6 @@ define([
 
         var filterType = evt.target.getAttribute('for');
         setFilterEnabled(filterType);
-
-        var input = document.querySelector('#' + filterType);
-        input.checked = true;
       }
     });
   };
@@ -138,7 +139,13 @@ define([
     utils.toggleVisibility(filtersContainer, true);
 
     setFiltersEnabled();
+
+    if (localStorage.lastFilter) {
+      DEFAULT_FILTER = localStorage.lastFilter;
+    }
+
     setFilterEnabled(DEFAULT_FILTER);
+
     setMoreButtonEnabled();
   });
 });
