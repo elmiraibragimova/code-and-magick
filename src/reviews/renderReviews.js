@@ -12,6 +12,8 @@ define([
   './review'
 ], function(utils, loader, filter, Filter, Review) {
   var filtersContainer = document.querySelector('.reviews-filter');
+  var reviewsFilter = filtersContainer.elements['reviews'];
+
   var moreButton = document.querySelector('.reviews-controls-more');
 
   var reviewsContainer = document.querySelector('.reviews-list');
@@ -22,9 +24,14 @@ define([
   var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 
   /**
-   * @const {Filter.<string>}
+   * @type {Filter.<string>}
    */
-  var DEFAULT_FILTER = Filter.ALL;
+  var defaultFilter = Filter.ALL;
+
+  /**
+   * @type {string}
+   */
+  var storageFilterKey = 'last-filter';
 
   /**
    * @const {number}
@@ -80,18 +87,21 @@ define([
    * @param {Filter} filterType
    */
   var setFilterEnabled = function(filterType) {
+    localStorage.setItem(storageFilterKey, filterType);
+
     filteredReviews = filter(reviews, filterType);
     pageNumber = 0;
 
     renderReviews(filteredReviews, pageNumber, true);
+
+    reviewsFilter.value = filterType;
   };
 
   var setFiltersEnabled = function() {
     filtersContainer.addEventListener('click', function(evt) {
-      var label = evt.target.classList.contains('reviews-filter-item');
       var input = evt.target.nodeName === 'INPUT';
 
-      if (label || input) {
+      if (input) {
         setFilterEnabled(evt.target.id);
       }
     });
@@ -105,9 +115,6 @@ define([
 
         var filterType = evt.target.getAttribute('for');
         setFilterEnabled(filterType);
-
-        var input = document.querySelector('#' + filterType);
-        input.checked = true;
       }
     });
   };
@@ -133,12 +140,18 @@ define([
   utils.toggleVisibility(filtersContainer, false);
 
   loader(REVIEWS_LOAD_URL, function(loadedReviews) {
+    var storageFilterValue = localStorage.getItem(storageFilterKey);
+
+    if (storageFilterValue) {
+      defaultFilter = storageFilterValue;
+    }
+
     reviews = loadedReviews;
 
     utils.toggleVisibility(filtersContainer, true);
 
     setFiltersEnabled();
-    setFilterEnabled(DEFAULT_FILTER);
+    setFilterEnabled(defaultFilter);
     setMoreButtonEnabled();
   });
 });
