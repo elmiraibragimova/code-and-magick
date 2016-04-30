@@ -5,7 +5,7 @@
 'use strict';
 
 define([
-  './utils'
+  '../utils'
 ], function(utils) {
   var gallery = document.querySelector('.overlay-gallery');
 
