@@ -18,9 +18,14 @@ define([
   var totalNumber = gallery.querySelector('.preview-number-total');
 
   /**
+   * @const {RegExp}
+   */
+  var PATTERN = /#photo\/(\S+)/;
+
+  /**
    * @type {number}
    */
-  var currentPhotoIndex;
+  var currentIndex;
 
   /**
    * @type {HTMLImageElement}
@@ -43,33 +48,35 @@ define([
     this.photos = [];
 
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
-    this._onCloseClick = this._onCloseClick.bind(this);
+    this._clearHash = this._clearHash.bind(this);
     this._selectNext = this._selectNext.bind(this);
     this._selectPrev = this._selectPrev.bind(this);
+
+    window.addEventListener('hashchange', this.onHashChange.bind(this));
   };
 
   Gallery.prototype = {
-    _showCurrentPhoto: function() {
-      photo.src = this.photos[currentPhotoIndex];
+    _show: function() {
+      photo.src = this.photos[currentIndex];
 
-      var photoNumber = currentPhotoIndex + 1;
+      var photoNumber = currentIndex + 1;
       currentNumber.innerHTML = photoNumber + '';
 
-      utils.toggleVisibility(buttonNext, currentPhotoIndex < this.photos.length - 1);
-      utils.toggleVisibility(buttonPrev, currentPhotoIndex > 0);
+      utils.toggleVisibility(buttonNext, currentIndex < this.photos.length - 1);
+      utils.toggleVisibility(buttonPrev, currentIndex > 0);
     },
 
     _selectPrev: function() {
-      if (currentPhotoIndex > 0 ) {
-        currentPhotoIndex -= 1;
-        this._showCurrentPhoto();
+      if (currentIndex > 0 ) {
+        currentIndex -= 1;
+        this.setPhotoHash(this.photos[currentIndex]);
       }
     },
 
     _selectNext: function() {
-      if (currentPhotoIndex < this.photos.length - 1) {
-        currentPhotoIndex += 1;
-        this._showCurrentPhoto();
+      if (currentIndex < this.photos.length - 1) {
+        currentIndex += 1;
+        this.setPhotoHash(this.photos[currentIndex]);
       }
     },
 
@@ -78,14 +85,10 @@ define([
       this._removeGalleryControls();
     },
 
-    _onCloseClick: function() {
-      this._closeGallery();
-    },
-
     _onDocumentKeyDown: function(evt) {
       switch (evt.keyCode) {
         case KeyCode.ESC:
-          this._closeGallery();
+          this._clearHash();
           break;
         case KeyCode.LEFT:
           this._selectPrev();
@@ -98,30 +101,53 @@ define([
 
     _setGalleryControls: function() {
       document.addEventListener('keydown', this._onDocumentKeyDown);
-      buttonClose.addEventListener('click', this._onCloseClick);
+      buttonClose.addEventListener('click', this._clearHash);
       buttonNext.addEventListener('click', this._selectNext);
       buttonPrev.addEventListener('click', this._selectPrev);
     },
 
     _removeGalleryControls: function() {
       document.removeEventListener('keydown', this._onDocumentKeyDown);
-      buttonClose.removeEventListener('click', this._onCloseClick);
+      buttonClose.removeEventListener('click', this._clearHash);
       buttonNext.removeEventListener('click', this._selectNext);
       buttonPrev.removeEventListener('click', this._selectPrev);
     },
 
-    openGallery: function(currentIndex) {
+    setPhotoHash: function(src) {
+      location.hash = '#photo/' + src;
+    },
+
+    _clearHash: function() {
+      location.hash = '';
+    },
+
+    onHashChange: function() {
+      var result = location.hash.match(PATTERN);
+
+      if (result) {
+        this.openGallery(result[1]);
+      } else {
+        this._closeGallery();
+      }
+    },
+
+    openGallery: function(currentPhoto) {
       if (!photoBox.querySelector('img')) {
         photo = photoBox.appendChild(new Image());
       }
+
+      if (isNaN(currentPhoto)) {
+        currentPhoto = this.photos.indexOf(currentPhoto);
+      }
+
+      currentIndex = parseInt(currentPhoto, 10);
 
       totalNumber.innerHTML = this.photos.length + '';
 
       utils.toggleVisibility(gallery, true);
       this._setGalleryControls();
 
-      currentPhotoIndex = parseInt(currentIndex, 10);
-      this._showCurrentPhoto();
+      this._show();
     },
 
     savePhotos: function(previews) {
