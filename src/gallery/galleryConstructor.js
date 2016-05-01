@@ -118,7 +118,13 @@ define([
     },
 
     _clearHash: function() {
-      location.hash = '';
+      history.pushState(
+        null,
+        null,
+        location.pathname + location.search
+      );
+
+      this.onHashChange();
     },
 
     onHashChange: function() {
@@ -152,6 +158,7 @@ define([
 
     savePhotos: function(previews) {
       this.photos = previews.slice();
+
     }
   };
 
