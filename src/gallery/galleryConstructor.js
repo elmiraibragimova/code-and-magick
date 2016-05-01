@@ -137,10 +137,10 @@ define([
       }
 
       if (isNaN(currentPhoto)) {
-        currentPhoto = this.photos.indexOf(currentPhoto);
+        currentIndex = this.photos.indexOf(currentPhoto);
+      } else {
+        currentIndex = parseInt(currentPhoto, 10);
       }
-
-      currentIndex = parseInt(currentPhoto, 10);
 
       totalNumber.innerHTML = this.photos.length + '';
 
