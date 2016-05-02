@@ -8,11 +8,6 @@ define([
   './getTemplate'
 ], function(template) {
   /**
-   * @const {string}
-   */
-  var ACTIVE_CLASSNAME = 'review-quiz-answer-active';
-
-  /**
    * @param {Object} data
    * @param {Element} container
    * @constructor
@@ -25,27 +20,31 @@ define([
     this.element.addEventListener('click', this._onQuizAnswer);
   };
 
-  Review.prototype = {
-    /**
-     * param {ClickEvent} evt
-     * @private
-     */
-    _onQuizAnswer: function(evt) {
-      if (evt.target.classList.contains('review-quiz-answer')) {
-        var activeAnswer = evt.target.parentNode.querySelector('.' + ACTIVE_CLASSNAME);
+  /**
+   * @const {string}
+   */
+  Review.ACTIVE_CLASSNAME = 'review-quiz-answer-active';
 
-        if (activeAnswer) {
-          activeAnswer.classList.remove(ACTIVE_CLASSNAME);
-        }
+  /**
+   * param {ClickEvent} evt
+   * @private
+   */
+  Review.prototype._onQuizAnswer = function(evt) {
+    if (evt.target.classList.contains('review-quiz-answer')) {
+      var active = this.constructor.ACTIVE_CLASSNAME;
+      var activeAnswer = evt.target.parentNode.querySelector('.' + active);
 
-        evt.target.classList.add(ACTIVE_CLASSNAME);
+      if (activeAnswer) {
+        activeAnswer.classList.remove(active);
       }
-    },
 
-    remove: function() {
-      this.element.removeEventListener('click', this._getQuizAnswer);
-      this.element.parentNode.removeChild(this.element);
+      evt.target.classList.add(active);
     }
+  };
+
+  Review.prototype.remove = function() {
+    this.element.removeEventListener('click', this._getQuizAnswer);
+    this.element.parentNode.removeChild(this.element);
   };
 
   return Review;
