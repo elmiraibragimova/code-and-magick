@@ -4,25 +4,13 @@
 
 'use strict';
 
-define(function() {
-  var template = document.querySelector('template');
-  var sample;
-
-  if ('content' in template) {
-    sample = template.content.querySelector('.review');
-  } else {
-    sample = template.querySelector('.review');
-  }
-
+define([
+  './getTemplate'
+], function(template) {
   /**
    * @const {string}
    */
   var ACTIVE_CLASSNAME = 'review-quiz-answer-active';
-
-  /**
-   * @const {number}
-   */
-  var IMAGE_LOAD_TIMEOUT = 10000;
 
   /**
    * @param {Object} data
@@ -31,82 +19,13 @@ define(function() {
    */
   var Review = function(data, container) {
     this.data = data;
-    this.element = this._getReview();
+    this.element = template(this.data);
     container.appendChild(this.element);
 
     this.element.addEventListener('click', this._onQuizAnswer);
   };
 
   Review.prototype = {
-    /**
-     * @param {HTMLElement} review
-     * @private
-     */
-    _insertImage: function(review) {
-      var author = review.querySelector('.review-author');
-
-      var authorImage = new Image(124, 124);
-
-      authorImage.title = author.title = this.data.author.name;
-      authorImage.alt = author.alt = 'Фотография пользователя ' + this.data.author.name;
-
-      authorImage.onload = function() {
-        clearTimeout(loadTimeout);
-
-        authorImage.classList.add('review-author');
-        review.replaceChild(authorImage, author);
-      };
-
-      authorImage.onerror = function() {
-        clearTimeout(loadTimeout);
-        review.classList.add('review-load-failure');
-      };
-
-      var loadTimeout = setTimeout(function() {
-        author.src = '';
-        review.classList.add('review-load-failure');
-      }, IMAGE_LOAD_TIMEOUT);
-
-      authorImage.src = this.data.author.picture;
-    },
-
-    /**
-     * @param {HTMLElement} review
-     * @private
-     */
-    _insertMark: function(review) {
-      var mark = review.querySelector('.review-rating');
-      var rating = this.data.rating;
-
-      var marks = ['two', 'three', 'four', 'five'];
-
-      if (rating > 1 && rating <= 5) {
-        mark.classList.add('review-rating-' + marks[rating - 2]);
-      }
-    },
-
-    /**
-     * Создание DOM-элемента отзыва.
-     * @return {HTMLElement}
-     * @private
-     */
-    _getReview: function() {
-      // Клонируем структуру шаблона.
-      var reviewItem = sample.cloneNode(true);
-
-      // Вставляем текст отзыва.
-      var description = reviewItem.querySelector('.review-text');
-      description.textContent = this.data.description;
-
-      // Вставляем оценку.
-      this._insertMark(reviewItem);
-
-      // Вставляем изображение.
-      this._insertImage(reviewItem);
-
-      return reviewItem;
-    },
-
     /**
      * param {ClickEvent} evt
      * @private
