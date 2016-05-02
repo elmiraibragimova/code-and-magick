@@ -47,10 +47,10 @@ define(function() {
      */
 
     inherit: function(Child, Ancestor) {
-      var emptyChain = function() {};
+      var EmptyChain = function() {};
 
-      emptyChain.prototype = Ancestor.prototype;
-      Child.prototype = new emptyChain();
+      EmptyChain.prototype = Ancestor.prototype;
+      Child.prototype = new EmptyChain();
     }
   };
 });
