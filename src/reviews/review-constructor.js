@@ -5,7 +5,7 @@
 'use strict';
 
 define([
-  './getTemplate'
+  './get-template'
 ], function(template) {
   /**
    * @param {Object} data

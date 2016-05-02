@@ -2,7 +2,7 @@
 
 require([
   './form/form',
-  './reviews/renderReviews',
+  './reviews/render-reviews',
   './game',
   './gallery/gallery'
 ]);
