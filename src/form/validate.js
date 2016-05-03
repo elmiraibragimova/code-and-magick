@@ -15,7 +15,7 @@ define(['../utils'], function(utils) {
    */
   return function(text, marks, name, buttonSubmit) {
     // Если оценка ниже '3', поле для отзыва становится обязательным.
-    text.required = marks.value < 3;
+    text.required = parseInt(marks.value, 10) < 3;
 
     var validName = name.validity.valid;
     var validText = text.validity.valid;
