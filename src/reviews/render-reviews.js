@@ -9,8 +9,9 @@ define([
   './load',
   '../filter/filter',
   '../filter/filter-type',
-  './review-constructor'
-], function(utils, loader, filter, Filter, Review) {
+  './review-constructor',
+  '../data/data-constructor'
+], function(utils, loader, filter, Filter, Review, Data) {
   var filtersContainer = document.querySelector('.reviews-filter');
   var reviewsFilter = filtersContainer.elements['reviews'];
 
@@ -77,7 +78,8 @@ define([
     var to = from + PAGE_SIZE;
 
     reviewList.slice(from, to).forEach(function(review) {
-      renderedReviews.push(new Review(review, reviewsContainer));
+      var data = new Data(review);
+      renderedReviews.push(new Review(data, reviewsContainer));
     });
 
     utils.toggleVisibility(moreButton, isNextPageAvailable(reviewList, page + 1, PAGE_SIZE));
