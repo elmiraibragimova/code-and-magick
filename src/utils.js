@@ -50,6 +50,8 @@ define(function() {
 
       EmptyChain.prototype = Ancestor.prototype;
       Child.prototype = new EmptyChain();
+
+      Child.prototype.constructor = Child;
     }
   };
 });
