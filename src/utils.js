@@ -45,7 +45,6 @@ define(function() {
      * @param {constructor} Child
      * @param {constructor} Ancestor
      */
-
     inherit: function(Child, Ancestor) {
       var EmptyChain = function() {};
 
