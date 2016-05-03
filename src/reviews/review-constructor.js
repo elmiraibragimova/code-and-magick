@@ -17,7 +17,7 @@ define([
     this.element = template(this.data);
     container.appendChild(this.element);
 
-    this.element.addEventListener('click', this._onQuizAnswer);
+    this.element.addEventListener('click', this._onQuizAnswer.bind(this));
   };
 
   /**
@@ -31,7 +31,7 @@ define([
    */
   Review.prototype._onQuizAnswer = function(evt) {
     if (evt.target.classList.contains('review-quiz-answer')) {
-      var active = this.constructor.ACTIVE_CLASSNAME;
+      var active = Review.ACTIVE_CLASSNAME;
       var activeAnswer = evt.target.parentNode.querySelector('.' + active);
 
       if (activeAnswer) {
