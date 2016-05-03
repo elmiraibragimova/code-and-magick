@@ -9,7 +9,7 @@ define([
   './load',
   '../filter/filter',
   '../filter/filter-type',
-  './review'
+  './review-constructor'
 ], function(utils, loader, filter, Filter, Review) {
   var filtersContainer = document.querySelector('.reviews-filter');
   var reviewsFilter = filtersContainer.elements['reviews'];

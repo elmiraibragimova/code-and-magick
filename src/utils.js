@@ -39,6 +39,17 @@ define(function() {
     isVisible: function(block) {
       var bottom = block.getBoundingClientRect().bottom;
       return bottom > 0;
+    },
+
+    /**
+     * @param {constructor} Child
+     * @param {constructor} Ancestor
+     */
+    inherit: function(Child, Ancestor) {
+      var EmptyChain = function() {};
+
+      EmptyChain.prototype = Ancestor.prototype;
+      Child.prototype = new EmptyChain();
     }
   };
 });

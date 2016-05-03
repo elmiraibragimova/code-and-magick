@@ -1,7 +1,7 @@
 'use strict';
 
 define([
-  './galleryConstructor'
+  './gallery-constructor'
 ], function(gallery) {
 
   var photoContainer = document.querySelector('.photogallery');
