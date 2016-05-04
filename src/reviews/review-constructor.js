@@ -29,7 +29,7 @@ define([
   Review.ACTIVE_CLASSNAME = 'review-quiz-answer-active';
 
   /**
-   * param {ClickEvent} evt
+   * @param {ClickEvent} evt
    * @private
    */
   Review.prototype._onQuizAnswer = function(evt) {
