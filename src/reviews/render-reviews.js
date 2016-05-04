@@ -9,8 +9,9 @@ define([
   './load',
   '../filter/filter',
   '../filter/filter-type',
-  './review-constructor'
-], function(utils, loader, filter, Filter, Review) {
+  './review-constructor',
+  '../data/data-constructor'
+], function(utils, loader, filter, Filter, Review, Data) {
   var filtersContainer = document.querySelector('.reviews-filter');
   var reviewsFilter = filtersContainer.elements['reviews'];
 
@@ -77,7 +78,8 @@ define([
     var to = from + PAGE_SIZE;
 
     reviewList.slice(from, to).forEach(function(review) {
-      renderedReviews.push(new Review(review, reviewsContainer));
+      var data = new Data(review);
+      renderedReviews.push(new Review(data, reviewsContainer));
     });
 
     utils.toggleVisibility(moreButton, isNextPageAvailable(reviewList, page + 1, PAGE_SIZE));
@@ -86,7 +88,7 @@ define([
   /**
    * @param {Filter} filterType
    */
-  var setFilterEnabled = function(filterType) {
+  var applyFilter = function(filterType) {
     localStorage.setItem(storageFilterKey, filterType);
 
     filteredReviews = filter(reviews, filterType);
@@ -97,12 +99,12 @@ define([
     reviewsFilter.value = filterType;
   };
 
-  var setFiltersEnabled = function() {
+  var filtersHandler = function() {
     filtersContainer.addEventListener('click', function(evt) {
       var input = evt.target.nodeName === 'INPUT';
 
       if (input) {
-        setFilterEnabled(evt.target.id);
+        applyFilter(evt.target.id);
       }
     });
 
@@ -114,7 +116,7 @@ define([
         evt.preventDefault();
 
         var filterType = evt.target.getAttribute('for');
-        setFilterEnabled(filterType);
+        applyFilter(filterType);
       }
     });
   };
@@ -129,7 +131,7 @@ define([
     return page < Math.ceil(reviewList.length / pageSize);
   };
 
-  var setMoreButtonEnabled = function() {
+  var moreButtonHandler = function() {
     moreButton.addEventListener('click', function() {
       pageNumber++;
       renderReviews(filteredReviews, pageNumber);
@@ -150,8 +152,8 @@ define([
 
     utils.toggleVisibility(filtersContainer, true);
 
-    setFiltersEnabled();
-    setFilterEnabled(defaultFilter);
-    setMoreButtonEnabled();
+    filtersHandler();
+    applyFilter(defaultFilter);
+    moreButtonHandler();
   });
 });

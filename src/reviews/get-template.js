@@ -4,7 +4,8 @@
 
 'use strict';
 
-define(function() {
+define([
+], function() {
   var template = document.querySelector('template');
   var sample;
 
@@ -21,15 +22,16 @@ define(function() {
 
   /**
    * @param {HTMLElement} review
-   * @param {Object} path
+   * @param {string} name
+   * @param {string} picture
    */
-  var insertImage = function(review, path) {
+  var insertImage = function(review, name, picture) {
     var author = review.querySelector('.review-author');
 
     var authorImage = new Image(124, 124);
 
-    authorImage.title = author.title = path.name;
-    authorImage.alt = author.alt = 'Фотография пользователя ' + path.name;
+    authorImage.title = author.title = name;
+    authorImage.alt = author.alt = 'Фотография пользователя ' + name;
 
     authorImage.onload = function() {
       clearTimeout(loadTimeout);
@@ -48,7 +50,7 @@ define(function() {
       review.classList.add('review-load-failure');
     }, IMAGE_LOAD_TIMEOUT);
 
-    authorImage.src = path.picture;
+    authorImage.src = picture;
   };
 
   /**
@@ -68,7 +70,6 @@ define(function() {
   /**
    * Создание DOM-элемента отзыва.
    * @param {Object} data
-   * @param {HTMLElement} container
    */
   return function(data) {
     // Клонируем структуру шаблона.
@@ -76,13 +77,15 @@ define(function() {
 
     // Вставляем текст отзыва.
     var description = reviewItem.querySelector('.review-text');
-    description.textContent = data.description;
+    description.textContent = data.getDescription();
 
     // Вставляем оценку.
-    insertMark(reviewItem, data.rating);
+    insertMark(reviewItem, data.getRating());
 
     // Вставляем изображение.
-    insertImage(reviewItem, data.author);
+    var name = data.getAuthorName();
+    var picture = data.getAuthorPicture();
+    insertImage(reviewItem, name, picture);
 
     return reviewItem;
   };

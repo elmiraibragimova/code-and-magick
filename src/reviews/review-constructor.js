@@ -5,20 +5,23 @@
 'use strict';
 
 define([
-  './get-template'
-], function(template) {
+  './get-template',
+  '../utils',
+  '../dom-component'
+], function(template, utils, DOMComponent) {
   /**
    * @param {Object} data
    * @param {Element} container
    * @constructor
    */
   var Review = function(data, container) {
-    this.data = data;
-    this.element = template(this.data);
-    container.appendChild(this.element);
+    DOMComponent.call(this, data, template);
+    DOMComponent.prototype.insertIntoDOM.call(this, container);
 
     this.element.addEventListener('click', this._onQuizAnswer.bind(this));
   };
+
+  utils.inherit(Review, DOMComponent);
 
   /**
    * @const {string}
@@ -26,7 +29,7 @@ define([
   Review.ACTIVE_CLASSNAME = 'review-quiz-answer-active';
 
   /**
-   * param {ClickEvent} evt
+   * @param {ClickEvent} evt
    * @private
    */
   Review.prototype._onQuizAnswer = function(evt) {
@@ -44,7 +47,7 @@ define([
 
   Review.prototype.remove = function() {
     this.element.removeEventListener('click', this._getQuizAnswer);
-    this.element.parentNode.removeChild(this.element);
+    DOMComponent.prototype.remove.call(this);
   };
 
   return Review;
