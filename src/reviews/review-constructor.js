@@ -9,6 +9,7 @@ define([
   '../utils',
   '../dom-component'
 ], function(template, utils, DOMComponent) {
+
   /**
    * @param {Object} data
    * @param {Element} container
@@ -28,26 +29,33 @@ define([
    */
   Review.ACTIVE_CLASSNAME = 'review-quiz-answer-active';
 
-  /**
-   * @param {ClickEvent} evt
-   * @private
-   */
-  Review.prototype._onQuizAnswer = function(evt) {
-    if (evt.target.classList.contains('review-quiz-answer')) {
-      var active = Review.ACTIVE_CLASSNAME;
-      var activeAnswer = evt.target.parentNode.querySelector('.' + active);
-
-      if (activeAnswer) {
-        activeAnswer.classList.remove(active);
-      }
-
-      evt.target.classList.add(active);
-    }
-  };
-
   Review.prototype.remove = function() {
     this.element.removeEventListener('click', this._getQuizAnswer);
     DOMComponent.prototype.remove.call(this);
+  };
+
+  /**
+   * @param {ClickEvent} evt
+   */
+  Review.prototype._onQuizAnswer = function(evt) {
+    var active = Review.ACTIVE_CLASSNAME;
+
+    var isActive = evt.target.classList.contains(active);
+    var isQuiz = evt.target.classList.contains('review-quiz-answer');
+
+    if (isQuiz && !isActive) {
+      var answer = evt.target.classList.contains('review-quiz-answer-yes');
+
+      this.data.setReviewUsefulness(answer, function() {
+        var activeAnswer = evt.target.parentNode.querySelector('.' + active);
+
+        if (activeAnswer) {
+          activeAnswer.classList.remove(active);
+        }
+
+        evt.target.classList.add(active);
+      });
+    }
   };
 
   return Review;

@@ -37,12 +37,18 @@ define(function() {
     return this.data.review_usefulness;
   };
 
-  Data.prototype.increaseUsefulness = function() {
-    this.data.review_usefulness += 1;
-  };
+  /**
+   * @param {boolean} answer
+   * @param {Function} callback
+   */
+  Data.prototype.setReviewUsefulness = function(answer, callback) {
+    if (answer) {
+      this.data.review_usefulness++;
+    } else {
+      this.data.review_usefulness--;
+    }
 
-  Data.prototype.decreaseUsefulness = function() {
-    this.data.review_usefulness -= 1;
+    callback();
   };
 
   return Data;
